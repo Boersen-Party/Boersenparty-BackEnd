@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.controller;
 
+import com.boersenparty.v_1_1.interfaces.ProductControllerInterface;
 import com.boersenparty.v_1_1.models.Order;
 import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.Product;
@@ -9,10 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping(path="api/v1")
-public class ProductController {
+public class ProductController implements ProductControllerInterface {
     @Autowired
     private final ProductService productService;
 
@@ -20,18 +21,38 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping(path="/products")
-    public List<Product> getProducts(){
-        return productService.getProducts();
+
+
+
+    @Override
+    public List<Product> getProducts(Long party_id) {
+        throw new UnsupportedOperationException("Method not implemented yet");
     }
 
-    @PostMapping(path = "/product")
-    public ResponseEntity<Product> createProduct(@RequestBody(required = false) Product product) {
-        if (product == null){
-            product = new Product();
-        }
 
-        return ResponseEntity.ok(productService.createProduct(product));
+    @Override
+    public Optional<Product> getProduct(Long party_id, Long product_id){
+        throw new UnsupportedOperationException("Method not implemented yet");
     }
+
+    @Override
+    public void deleteProduct(Long party_id,  Long product_id){
+        throw new UnsupportedOperationException("Method not implemented yet");
+    }
+
+    @Override
+    public ResponseEntity<Product> createProduct(Product product){
+        throw new UnsupportedOperationException("Method not implemented yet");
+    }
+
+    @Override
+    public ResponseEntity<Product> updateProduct(
+             Product product,
+             Long party_id,
+             Long product_id){
+        throw new UnsupportedOperationException("Method not implemented yet");
+    }
+
+
 
 }

@@ -19,7 +19,7 @@ public class Order {
     private PartyGuest partyGuest;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "party_id", nullable = true)
+    @JoinColumn(name = "party_id", nullable = false)
     private Party party;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -28,8 +28,9 @@ public class Order {
     public Order() {
     }
 
-    public Order(PartyGuest partyGuest) {
+    public Order(PartyGuest partyGuest, Party party) {
         this.partyGuest = partyGuest;
+        this.party = party;
     }
 
     @CreationTimestamp

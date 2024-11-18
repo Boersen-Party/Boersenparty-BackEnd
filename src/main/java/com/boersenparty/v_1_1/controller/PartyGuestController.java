@@ -2,28 +2,69 @@ package com.boersenparty.v_1_1.controller;
 
 
 
+import com.boersenparty.v_1_1.interfaces.PartyGuestControllerInterface;
 import com.boersenparty.v_1_1.models.PartyGuest;
 import com.boersenparty.v_1_1.service.PartyGuestService;
+import com.boersenparty.v_1_1.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 
 @RestController
-@RequestMapping(path="api/v1")
-public class PartyGuestController {
+public class PartyGuestController implements PartyGuestControllerInterface {
+
     @Autowired
     private final PartyGuestService partyGuestService;
 
-    public PartyGuestController(PartyGuestService partyGuestService ) {
+    @Autowired
+    private final PartyService partyService;
+    public PartyGuestController(PartyGuestService partyGuestService, PartyService partyService ) {
+
         this.partyGuestService = partyGuestService;
+        this.partyService = partyService;
     }
 
-    @GetMapping(path="/guests")
-    public List<PartyGuest> getPartyGuests(){
+    @Override
+    public List<PartyGuest> getGuests(){
         return partyGuestService.getPartyGuests();
     }
 
+    @Override
+    public Optional<PartyGuest> getGuest(Long party_id, Long guest_id){
+        return partyGuestService.getPartyGuestInParty(party_id, guest_id);
+    }
+
+    @Override
+    public void deleteGuest(Long party_id, Long guest_id){
+        partyGuestService.deleteGuestFromParty(party_id, guest_id);
+    }
+
+    @Override
+    public ResponseEntity<PartyGuest> createGuest(PartyGuest guest, Long party_id){
+        return partyGuestService.createGuest(guest, party_id);
+
+    }
+    @PutMapping(path="/{party_id}/guests/{guest_id}")
+    public ResponseEntity<PartyGuest> updateGuest(PartyGuest guest, Long party_id, Long guest_id){
+        return partyGuestService.updateGuest(guest, party_id, guest_id);
+    }
+
+    /*
 
 
+
+
+    //This is the only place where PartyGuests are created
+    @PutMapping(path="/parties/{party_id}/guests")
+    public void joinParty(@PathVariable Long party_id) {
+        //test later
+        //partyService.joinParty(party_id);
+    }
+
+
+     */
 }

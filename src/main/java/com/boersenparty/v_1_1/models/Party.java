@@ -1,7 +1,7 @@
 package com.boersenparty.v_1_1.models;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -13,26 +13,70 @@ public class Party {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Possible Strings: ACTIVE: The party is currently ongoing and participants can buy or sell stocks.
-    //
-    //INACTIVE: The party is not currently active, and no transactions can take place.
-    //
-    //PENDING: The party is being set up or is awaiting the start time.
-    private String status = "PENDING";
+    private String name;
 
-    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
+    // Constraint: ensure start_date is in the future, and is earlier than end_date etc.
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
+    private LocalDateTime start_date;
+
+
+    // TODO: In frontend: block end_date input, before a start_date is inputted
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
+    private LocalDateTime end_date;
+
+
+
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = false)
     private List<PartyGuest> partyGuests;
 
 
-    // TODO this functionality
-    private String partyHost = "Admin";
+    private String hosted_by;
 
     public Party(){
-
+        System.out.println("Default Constructor is called");
     }
 
-    public Party(String status){
-        this.status = status;
+    /*
+    public Party(Party party){
+        System.out.println("First Constructor is called");
+        this.name = party.getName();
+        this.start_date = party.getStart_date();
+        this.end_date = party.getEnd_date();
+        this.hosted_by = party.getHosted_by();
+    }
+
+
+     */
+
+    public Party(String name, String hosted_by) {
+        System.out.println("First Constructor is called");
+        this.name = name;
+        this.hosted_by = hosted_by;
+        this.start_date = LocalDateTime.now();
+        this.end_date = this.start_date.plusDays(1);
+    }
+    public Party(String name, LocalDateTime start_date, LocalDateTime end_date, String hosted_by) {
+        System.out.println("Second Constructor is called");
+        this.name = name;
+        this.start_date = start_date;
+        this.end_date = end_date;
+        this.hosted_by = hosted_by;
+    }
+
+    @Override
+    public String toString() {
+        return "Party{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", start_date=" + start_date +
+                ", end_date=" + end_date +
+                ", partyGuests=" + partyGuests +
+                ", hosted_by='" + hosted_by + '\'' +
+                '}';
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -40,12 +84,36 @@ public class Party {
     }
 
 
-    public String getStatus() {
-        return status;
+    public String getName() {
+        return name;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public LocalDateTime getStart_date() {
+        return start_date;
+    }
+
+    public void setStart_date(LocalDateTime start_date) {
+        this.start_date = start_date;
+    }
+
+    public LocalDateTime getEnd_date() {
+        return end_date;
+    }
+
+    public void setEnd_date(LocalDateTime end_date) {
+        this.end_date = end_date;
+    }
+
+    public String getHosted_by() {
+        return hosted_by;
+    }
+
+    public void setHosted_by(String hosted_by) {
+        this.hosted_by = hosted_by;
     }
 
     public List<PartyGuest> getPartyGuests() {
@@ -56,11 +124,4 @@ public class Party {
         this.partyGuests = partyGuests;
     }
 
-    public String getPartyhost() {
-        return partyHost;
-    }
-
-    public void setPartyhost(String partyHost) {
-        this.partyHost = partyHost;
-    }
 }
