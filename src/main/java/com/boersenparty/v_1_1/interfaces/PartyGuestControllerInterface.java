@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface PartyGuestControllerInterface {
 
     @GetMapping(path="/{party_id}/guests")
-    public List<PartyGuest> getGuests();
+    public List<PartyGuest> getGuests(@PathVariable Long party_id);
 
     @GetMapping(path="/{party_id}/guests/{guest_id}")
     public Optional<PartyGuest> getGuest(@PathVariable Long party_id, @PathVariable Long guest_id);

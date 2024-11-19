@@ -79,28 +79,6 @@ public class PartyService {
         return ResponseEntity.ok(existingParty);
     }
 
-    /*
-    public ResponseEntity<Party> updateParty(Party party, Long party_id) {
-        Optional<Party> optionalParty = partyRepository.findById(party_id);
-        if (optionalParty.isPresent()){
-           Party existingPartyToBeUpdated = optionalParty.get();
 
-            existingPartyToBeUpdated.setName(party.getName());
-            existingPartyToBeUpdated.setPartyGuests(party.getPartyGuests());
-            existingPartyToBeUpdated.setHosted_by(party.getHosted_by());
-            existingPartyToBeUpdated.setStart_date(party.getStart_date());
-            existingPartyToBeUpdated.setEnd_date(party.getEnd_date());
-
-           partyRepository.save(existingPartyToBeUpdated);
-           System.out.println("Party: " + existingPartyToBeUpdated + "has been updated");
-
-           return ResponseEntity.ok(existingPartyToBeUpdated);
-        }
-        //spring flips out way sooner than this can enter
-        System.out.println("this will not show up because spring flips out way sooner");
-         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid party_id - Party not found");
-    }
-
-     */
 }
 

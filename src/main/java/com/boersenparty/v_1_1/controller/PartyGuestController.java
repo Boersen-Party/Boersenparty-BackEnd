@@ -29,8 +29,8 @@ public class PartyGuestController implements PartyGuestControllerInterface {
     }
 
     @Override
-    public List<PartyGuest> getGuests(){
-        return partyGuestService.getPartyGuests();
+    public List<PartyGuest> getGuests(Long party_id){
+        return partyGuestService.getPartyGuests(party_id);
     }
 
     @Override

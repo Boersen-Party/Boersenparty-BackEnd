@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,6 +21,7 @@ public class PartyGuest {
 
 
     @OneToMany(mappedBy = "partyGuest", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Order> orders;
 
     @Override
@@ -47,16 +49,19 @@ public class PartyGuest {
         this.party = party;
     }
 
-    public PartyGuest(Party party){
-        this.party = party;
+    public PartyGuest(){
+        System.out.println("Default Guest constructor is called");
         this.uuid = UUID.randomUUID();
     }
 
-    // TODO: warum braucht es den default-Constructor?
-    //  Ich will nur den expliziten Constructor (siehe unten)
-    public PartyGuest(){
+    public PartyGuest(Party party){
+        this.party = party;
         this.uuid = UUID.randomUUID();
+        System.out.println("Second Guest constructor is called");
+
     }
+
+
 
     public List<Order> getOrders() {
         return orders;
@@ -79,8 +84,7 @@ public class PartyGuest {
     }
 
 
-
-
-
-
+    public void addOrder(Order order) {
+        this.orders.add(order);
+    }
 }

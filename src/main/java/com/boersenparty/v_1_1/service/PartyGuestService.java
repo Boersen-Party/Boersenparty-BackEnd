@@ -21,8 +21,12 @@ public class PartyGuestService {
         this.partyRepository = partyRepository;
     }
 
-    public List<PartyGuest> getPartyGuests() {
-        return partyGuestRepository.findAll();
+    public List<PartyGuest> getPartyGuests(Long party_id) {
+
+        Party party = partyRepository.findById(party_id)
+                .orElseThrow(() -> new RuntimeException("Party with ID " + party_id + " not found"));
+
+        return party.getPartyGuests();
 
     }
 
@@ -79,10 +83,10 @@ public class PartyGuestService {
                 .orElseThrow(() -> new RuntimeException("Party with ID " + partyId + " not found"));
 
         guest.setParty(party);
-
         PartyGuest createdGuest = partyGuestRepository.save(guest);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(createdGuest);
+
     }
 
     public ResponseEntity<PartyGuest> updateGuest(PartyGuest guest, Long partyId, Long guestId) {
@@ -105,9 +109,10 @@ public class PartyGuestService {
                 optionalParty.get()
         );
 
-        PartyGuest savedGuest = partyGuestRepository.save(updatedGuest);
 
-        return ResponseEntity.ok(savedGuest);
+        //doesn't quite work yet
+        PartyGuest savedGuest = partyGuestRepository.save(updatedGuest);
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(savedGuest);
     }
 
 }

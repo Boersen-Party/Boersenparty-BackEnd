@@ -23,6 +23,7 @@ public class OrderController implements OrderControllerInterface {
 
     @Override
     public List<Order> getOrders(Long party_id,  Long guest_id){
+
         return orderService.getOrders(party_id, guest_id);
     }
 
@@ -33,13 +34,14 @@ public class OrderController implements OrderControllerInterface {
     }
 
     @Override
-    public ResponseEntity<Order> createOrder(Order order){
-        return orderService.createOrder(order);
+    public ResponseEntity<Order> createOrder(Long party_id, Long guest_id, Order order){
+        return orderService.createOrder(party_id, guest_id, order);
     }
 
     @Override
     public ResponseEntity<Order> updateOrder(Order order, Long party_id,
                                              Long guest_id, Long order_id){
+        System.out.println("updateOrder not yet implemented");
         return null;
     }
 

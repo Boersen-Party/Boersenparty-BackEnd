@@ -14,6 +14,7 @@ public class Party {
     private Long id;
 
     private String name;
+    private String hosted_by;
 
     // Constraint: ensure start_date is in the future, and is earlier than end_date etc.
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
@@ -30,26 +31,15 @@ public class Party {
     private List<PartyGuest> partyGuests;
 
 
-    private String hosted_by;
+
 
     public Party(){
-        System.out.println("Default Constructor is called");
+        System.out.println("Default Party Constructor is called");
     }
 
-    /*
-    public Party(Party party){
-        System.out.println("First Constructor is called");
-        this.name = party.getName();
-        this.start_date = party.getStart_date();
-        this.end_date = party.getEnd_date();
-        this.hosted_by = party.getHosted_by();
-    }
-
-
-     */
 
     public Party(String name, String hosted_by) {
-        System.out.println("First Constructor is called");
+        System.out.println("First Party Constructor is called");
         this.name = name;
         this.hosted_by = hosted_by;
         this.start_date = LocalDateTime.now();
@@ -117,7 +107,7 @@ public class Party {
     }
 
     public List<PartyGuest> getPartyGuests() {
-        return partyGuests;
+        return this.partyGuests;
     }
 
     public void setPartyGuests(List<PartyGuest> partyGuests) {

@@ -2,15 +2,18 @@ package com.boersenparty.v_1_1.service;
 
 import com.boersenparty.v_1_1.dto.OrderDTO;
 import com.boersenparty.v_1_1.models.Order;
+import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.PartyGuest;
 import com.boersenparty.v_1_1.repository.OrderRepository;
 import com.boersenparty.v_1_1.repository.PartyGuestRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -18,10 +21,14 @@ public class OrderService {
     private final PartyGuestRepository partyGuestRepository;
     private final PartyRepository partyRepository;
 
-    public OrderService(OrderRepository orderRepository, PartyGuestRepository partyGuestRepository, PartyRepository partyRepository) {
+    private final PartyGuestService partyGuestService;
+
+    public OrderService(OrderRepository orderRepository, PartyGuestRepository partyGuestRepository,
+                        PartyRepository partyRepository, PartyGuestService partyGuestService) {
         this.orderRepository = orderRepository;
         this.partyGuestRepository = partyGuestRepository;
         this.partyRepository = partyRepository;
+        this.partyGuestService = partyGuestService;
     }
 
 
@@ -41,12 +48,23 @@ public class OrderService {
     public void deleteOrder(Long partyId, Long guestId, Long orderId) {
         // naked delete for now, check if exists before deleting?
         System.out.println("to be implemented");
-        //orderRepository.deleteById(partyId, guestId, orderId);
     }
 
-    public ResponseEntity<Order> createOrder(Order order) {
-        System.out.println("to be implemented");
-        return null;
+    public ResponseEntity<Order> createOrder(Long party_id, Long guest_id, Order order) {
+        System.out.println(order);
+        // 1. find guest inside of said party
+        Optional <PartyGuest> optionalguest = partyGuestService.getPartyGuestInParty(party_id, guest_id);
+        PartyGuest partyguest = optionalguest.get();
+
+
+        // Order NEEDS a mapping to PartyGuest, Party to instantiate
+        order.setPartyGuest(partyguest);
+        order.setParty(partyguest.getParty());
+
+        // 2. Add Order to said guest
+        partyguest.addOrder(order);
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
+
     }
 
 

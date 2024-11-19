@@ -11,4 +11,5 @@ public interface OrderRepository extends JpaRepository <Order, Long> {
     //Die Orders eines bestimmten Gastes, einer bestimmten Party
     List<Order> findByPartyIdAndPartyGuestId(Long partyId, Long partyGuestId);
 
+
 }
