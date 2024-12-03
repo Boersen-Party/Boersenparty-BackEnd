@@ -1,5 +1,5 @@
 # STAGE 1: Build Stage
-FROM maven:3.8.7-openjdk-17 AS build
+FROM maven:3.8.8-eclipse-temurin-17 AS build
 
 # Setze das Arbeitsverzeichnis
 WORKDIR /app
@@ -14,7 +14,7 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 # Baue das Projekt
-RUN mvn clean package -DskipTests
+RUN mvn clean package
 
 # STAGE 2: Runtime Stage
 FROM openjdk:17-jdk-slim AS runtime
