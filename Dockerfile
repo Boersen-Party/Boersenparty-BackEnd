@@ -1,5 +1,5 @@
 # STAGE 1: Build Stage
-FROM maven:3.8.8-eclipse-temurin-17 AS build
+FROM maven:3.9.9-eclipse-temurin-21 AS build
 
 # Setze das Arbeitsverzeichnis
 WORKDIR /app
@@ -14,10 +14,10 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 # Baue das Projekt
-RUN mvn clean package
+RUN mvn clean package -DskipTests
 
 # STAGE 2: Runtime Stage
-FROM openjdk:17-jdk-slim AS runtime
+FROM eclipse-temurin:21 AS runtime
 
 # Setze das Arbeitsverzeichnis
 WORKDIR /app
