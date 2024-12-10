@@ -23,6 +23,7 @@ public class PartyController implements PartyControllerInterface {
 
     @Override
     public List<Party> getParties() {
+        System.out.println("getParties() called");
         return partyService.getParties();
     }
     //make the throwing happen in service?
@@ -40,6 +41,7 @@ public class PartyController implements PartyControllerInterface {
     // Needs lots of testing - also implement Response Codes
     @Override
     public ResponseEntity<Party> createParty(Party party) {
+        System.out.println("create Party called");
         return ResponseEntity.ok(partyService.createParty(party));
     }
 

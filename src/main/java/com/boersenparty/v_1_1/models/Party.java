@@ -14,15 +14,15 @@ public class Party {
     private Long id;
 
     private String name;
-    private String hosted_by;
+    private String hosted_by = "Partyveranstalter";
 
     // Constraint: ensure start_date is in the future, and is earlier than end_date etc.
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_date;
 
 
     // TODO: In frontend: block end_date input, before a start_date is inputted
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime end_date;
 
 
@@ -45,12 +45,12 @@ public class Party {
         this.start_date = LocalDateTime.now();
         this.end_date = this.start_date.plusDays(1);
     }
-    public Party(String name, LocalDateTime start_date, LocalDateTime end_date, String hosted_by) {
+    public Party(String name, LocalDateTime start_date, LocalDateTime end_date) {
         System.out.println("Second Constructor is called");
         this.name = name;
         this.start_date = start_date;
         this.end_date = end_date;
-        this.hosted_by = hosted_by;
+        this.hosted_by = "Partyveranstalter";
     }
 
     @Override
