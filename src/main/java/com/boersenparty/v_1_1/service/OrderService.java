@@ -51,6 +51,7 @@ public class OrderService {
     }
 
     public ResponseEntity<Order> createOrder(Long party_id, Long guest_id, Order order) {
+        /*
         System.out.println(order);
         // 1. find guest inside of said party
         Optional <PartyGuest> optionalguest = partyGuestService.getPartyGuestInParty(party_id, guest_id);
@@ -65,13 +66,16 @@ public class OrderService {
         partyguest.addOrder(order);
         return ResponseEntity.status(HttpStatus.CREATED).body(order);
 
+         */
+
+        return null;
     }
 
 
 
 
 
-    /*
+
     public Order realizeOrder(Long guestId) {
         PartyGuest partyGuest = partyGuestRepository.findById(guestId)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid PartyGuest"));
@@ -80,19 +84,7 @@ public class OrderService {
         return orderRepository.save(order);
     }
 
-     */
 
 
-    // TODO: remake createOrder
-    /*
-    public Order createOrder(OrderDTO orderDTO) {
-        PartyGuest partyGuest = partyGuestRepository.findById(orderDTO.getPartyguest_id())
-                .orElseThrow(() -> new EntityNotFoundException("Invalid PartyGuest"));
 
-        Order order = new Order(partyGuest, orderDTO.getParty_id());
-
-        return orderRepository.save(order);
-    }
-
-     */
 }

@@ -5,7 +5,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 
-// TODO: "n_guests" als Abfrage funktion in PartyService
 @Entity
 @Table(name="tParties")
 public class Party {
@@ -14,22 +13,17 @@ public class Party {
     private Long id;
 
     private String name;
-    private String hosted_by = "Partyveranstalter";
 
-    // Constraint: ensure start_date is in the future, and is earlier than end_date etc.
+    private String hostedBy;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_date;
 
-
-    // TODO: In frontend: block end_date input, before a start_date is inputted
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime end_date;
 
-
-
     @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = false)
     private List<PartyGuest> partyGuests;
-
 
 
 
@@ -41,7 +35,7 @@ public class Party {
     public Party(String name, String hosted_by) {
         System.out.println("First Party Constructor is called");
         this.name = name;
-        this.hosted_by = hosted_by;
+        this.hostedBy = hosted_by;
         this.start_date = LocalDateTime.now();
         this.end_date = this.start_date.plusDays(1);
     }
@@ -50,7 +44,7 @@ public class Party {
         this.name = name;
         this.start_date = start_date;
         this.end_date = end_date;
-        this.hosted_by = "Partyveranstalter";
+        this.hostedBy = "Partyveranstalter";
     }
 
     @Override
@@ -61,7 +55,7 @@ public class Party {
                 ", start_date=" + start_date +
                 ", end_date=" + end_date +
                 ", partyGuests=" + partyGuests +
-                ", hosted_by='" + hosted_by + '\'' +
+                ", hosted_by='" + hostedBy + '\'' +
                 '}';
     }
 
@@ -99,11 +93,11 @@ public class Party {
     }
 
     public String getHosted_by() {
-        return hosted_by;
+        return hostedBy;
     }
 
     public void setHosted_by(String hosted_by) {
-        this.hosted_by = hosted_by;
+        this.hostedBy = hosted_by;
     }
 
     public List<PartyGuest> getPartyGuests() {

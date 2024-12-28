@@ -1,19 +1,17 @@
 package com.boersenparty.v_1_1.controller;
 
-import com.boersenparty.v_1_1.dto.OrderDTO;
 import com.boersenparty.v_1_1.interfaces.OrderControllerInterface;
 import com.boersenparty.v_1_1.models.Order;
 import com.boersenparty.v_1_1.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import java.util.Optional;
 
 
 @RestController
-public class OrderController implements OrderControllerInterface {
-
+public class OrderController{
+//public class OrderController implements OrderControllerInterface {
+  /*
     @Autowired
     private final OrderService orderService;
 
@@ -21,11 +19,14 @@ public class OrderController implements OrderControllerInterface {
         this.orderService = orderService;
     }
 
-    @Override
-    public List<Order> getOrders(Long party_id,  Long guest_id){
 
-        return orderService.getOrders(party_id, guest_id);
+
+    @Override
+    public List<Order> getOrders(Long party_id, Long guest_id){
+        List<Order> list = new List<Order>;
+        return list;
     }
+
 
 
     @Override
@@ -45,5 +46,5 @@ public class OrderController implements OrderControllerInterface {
         return null;
     }
 
-
+*/
 }

@@ -3,11 +3,10 @@ import com.boersenparty.v_1_1.interfaces.PartyControllerInterface;
 import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,11 +20,29 @@ public class PartyController implements PartyControllerInterface {
         this.partyService = partyService;
     }
 
+
+    // Gets the KeyCloak UserID ("preffered username") from the Token
+    private String getUserID() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof org.springframework.security.oauth2.jwt.Jwt) {
+            org.springframework.security.oauth2.jwt.Jwt jwt = (org.springframework.security.oauth2.jwt.Jwt) principal;
+
+            String name = jwt.getClaim("preferred_username");
+            if (name != null) {
+                return name;
+            }
+        }
+        // Fallback
+        System.out.println("ERROR: claim (PREFFERED USERNAME) unaccesible, returning getName() instead");
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
     @Override
     //@PreAuthorize("hasAuthority('PARTIES_READ')")
     public List<Party> getParties() {
         System.out.println("getParties() called");
-        return partyService.getParties();
+        return partyService.getPartiesHostedBy(getUserID());
     }
 
     @Override
@@ -44,10 +61,10 @@ public class PartyController implements PartyControllerInterface {
     @PreAuthorize("hasAuthority('PARTIES_CREATE')")
     public ResponseEntity<Party> createParty(Party party) {
         System.out.println("create Party called");
+        System.out.println("party about to be created is:" + party);
         return ResponseEntity.ok(partyService.createParty(party));
     }
 
-    // Needs lots of testing - also implement Response Codes
     @Override
     public ResponseEntity<Party> updateParty(Party party,Long party_id) {
         return partyService.updateParty(party, party_id);

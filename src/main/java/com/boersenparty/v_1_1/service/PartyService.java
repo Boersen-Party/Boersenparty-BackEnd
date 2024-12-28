@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 import java.util.Optional;
 
+// TODO: "n_guests" als Abfrage funktion in PartyService
+
 @Service
 public class PartyService {
     private final PartyRepository partyRepository;
@@ -20,6 +22,11 @@ public class PartyService {
     public PartyService(PartyRepository partyRepository, PartyGuestRepository partyGuestRepository) {
         this.partyRepository = partyRepository;
         this.partyGuestRepository = partyGuestRepository;
+    }
+    public List<Party> getPartiesHostedBy(String userId) {
+        System.out.println("keycloak userid is:" + userId);
+        System.out.println(partyRepository.findByHostedBy(userId));
+        return partyRepository.findByHostedBy(userId);
     }
 
     public List<Party> getParties() {
