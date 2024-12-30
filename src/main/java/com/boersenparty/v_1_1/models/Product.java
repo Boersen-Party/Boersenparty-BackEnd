@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -11,22 +12,31 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "party_id", nullable = true)
+    @JsonIgnore
     private Party party;
 
-    private String name = "Bier Augustiner 0.5l ";
+    private String name;
 
+    private Integer pQuantity;
+    private Double price_base;
+    private Double price_min;
+    private Double price_max;
 
-    private Integer pQuantity= 20;
-    private Double price_base = 0.6;
-    private Double price_min = 0.4;
-    private Double price_max = 2.3;
+    private boolean is_active;
 
-    private boolean is_active=true; //is_in_stock
-
-    private String image = "Here the image of a Product is shown!";
+    private String imageURL;
 
     // TODO: productType table
     private String productType = "beverage";
+
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Party getParty() {
         return party;
@@ -84,12 +94,12 @@ public class Product {
         this.is_active = is_active;
     }
 
-    public String getImage() {
-        return image;
+    public String getImageURL() {
+        return imageURL;
     }
 
-    public void setImage(String image) {
-        this.image = image;
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public String getProductType() {
@@ -100,6 +110,8 @@ public class Product {
         this.productType = productType;
     }
 
+
+
     public Product(Party party, String name, Integer pQuantity, Double price_base, Double price_min, Double price_max, boolean is_active, String image, String productType) {
         this.party = party;
         this.name = name;
@@ -107,8 +119,8 @@ public class Product {
         this.price_base = price_base;
         this.price_min = price_min;
         this.price_max = price_max;
-        this.is_active = is_active;
-        this.image = image;
+        this.is_active = (pQuantity > 0) ? true : false;
+        this.imageURL = image;
         this.productType = productType;
     }
 
@@ -125,7 +137,7 @@ public class Product {
                 ", price_min=" + price_min +
                 ", price_max=" + price_max +
                 ", is_active=" + is_active +
-                ", image='" + image + '\'' +
+                ", imageURL='" + imageURL + '\'' +
                 ", productType='" + productType + '\'' +
                 '}';
     }

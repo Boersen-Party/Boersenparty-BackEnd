@@ -16,6 +16,8 @@ public class Party {
 
     private String hostedBy;
 
+
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_date;
 
@@ -25,21 +27,28 @@ public class Party {
     @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = false)
     private List<PartyGuest> partyGuests;
 
+    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = false)
+    private List <Product> products;
 
 
-    public Party(){
+    public Party(){}
+
+    public Party(List<Product> products){
+        this.products = products;
         System.out.println("Default Party Constructor is called");
     }
 
 
-    public Party(String name, String hosted_by) {
+    public Party(String name, String hosted_by, List<Product> products) {
+        this.products = products;
         System.out.println("First Party Constructor is called");
         this.name = name;
         this.hostedBy = hosted_by;
         this.start_date = LocalDateTime.now();
         this.end_date = this.start_date.plusDays(1);
     }
-    public Party(String name, LocalDateTime start_date, LocalDateTime end_date) {
+    public Party(String name, LocalDateTime start_date, LocalDateTime end_date, List<Product> products) {
+        this.products = products;
         System.out.println("Second Constructor is called");
         this.name = name;
         this.start_date = start_date;
@@ -106,6 +115,21 @@ public class Party {
 
     public void setPartyGuests(List<PartyGuest> partyGuests) {
         this.partyGuests = partyGuests;
+    }
+    public String getHostedBy() {
+        return hostedBy;
+    }
+
+    public void setHostedBy(String hostedBy) {
+        this.hostedBy = hostedBy;
+    }
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
 }

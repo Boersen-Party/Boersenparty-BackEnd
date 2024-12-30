@@ -1,6 +1,5 @@
 package com.boersenparty.v_1_1.service;
 
-import com.boersenparty.v_1_1.dto.OrderDTO;
 import com.boersenparty.v_1_1.models.Order;
 import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.PartyGuest;
@@ -8,7 +7,6 @@ import com.boersenparty.v_1_1.repository.OrderRepository;
 import com.boersenparty.v_1_1.repository.PartyGuestRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 

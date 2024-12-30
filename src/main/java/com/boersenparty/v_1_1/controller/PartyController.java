@@ -39,7 +39,7 @@ public class PartyController implements PartyControllerInterface {
     }
 
     @Override
-    //@PreAuthorize("hasAuthority('PARTIES_READ')")
+    @PreAuthorize("hasAuthority('PARTIES_READ')")
     public List<Party> getParties() {
         System.out.println("getParties() called");
         return partyService.getPartiesHostedBy(getUserID());
@@ -60,7 +60,6 @@ public class PartyController implements PartyControllerInterface {
     @Override
     @PreAuthorize("hasAuthority('PARTIES_CREATE')")
     public ResponseEntity<Party> createParty(Party party) {
-        System.out.println("create Party called");
         System.out.println("party about to be created is:" + party);
         return ResponseEntity.ok(partyService.createParty(party));
     }

@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.controller;
 
+import com.boersenparty.v_1_1.dto.ProductDTO;
 import com.boersenparty.v_1_1.interfaces.ProductControllerInterface;
 import com.boersenparty.v_1_1.models.Order;
 import com.boersenparty.v_1_1.models.Party;
@@ -25,8 +26,8 @@ public class ProductController implements ProductControllerInterface {
 
 
     @Override
-    public List<Product> getProducts(Long party_id) {
-        throw new UnsupportedOperationException("Method not implemented yet");
+    public List<ProductDTO> getProducts(Long party_id) {
+        return productService.getProducts(party_id);
     }
 
 
@@ -41,8 +42,8 @@ public class ProductController implements ProductControllerInterface {
     }
 
     @Override
-    public ResponseEntity<Product> createProduct(Product product){
-        throw new UnsupportedOperationException("Method not implemented yet");
+    public ResponseEntity<ProductDTO> createProduct(ProductDTO productDTO, Long party_id){
+        return ResponseEntity.ok(productService.createProduct(productDTO, party_id));
     }
 
     @Override
