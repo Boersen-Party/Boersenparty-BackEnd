@@ -22,42 +22,6 @@ public class PartyController implements PartyControllerInterface {
     }
 
 
-    // Gets the KeyCloak UserID ("preffered username") from the Token
-    private String getUserID() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof org.springframework.security.oauth2.jwt.Jwt) {
-            org.springframework.security.oauth2.jwt.Jwt jwt = (org.springframework.security.oauth2.jwt.Jwt) principal;
-
-            String name = jwt.getClaim("preferred_username");
-
-            if (name != null) {
-                return name;
-            }
-        }
-        // Fallback
-        System.out.println("ERROR: claim (PREFFERED USERNAME) unaccesible, returning getName() instead");
-        return SecurityContextHolder.getContext().getAuthentication().getName();
-    }
-
-    private boolean hasAuthority(String authority) {
-        return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
-                .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority));
-    }
-
-    private String getWorksForFromToken() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (principal instanceof org.springframework.security.oauth2.jwt.Jwt) {
-            org.springframework.security.oauth2.jwt.Jwt jwt = (org.springframework.security.oauth2.jwt.Jwt) principal;
-            return jwt.getClaim("works_for");
-        }
-
-        // Fallback if the attribute is missing or token is invalid
-        return null;
-    }
-
-
 
     /*
     Ein 'Veranstalter' braucht bloß die '_VERANSTALTER' Rolle um getParties() zu betätigen
@@ -69,30 +33,11 @@ public class PartyController implements PartyControllerInterface {
     'works_for' = 'veranstalter2'
 
      */
-
     @Override
     @PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
     public List<Party> getParties() {
         System.out.println("getParties is called in controller!");
-        if (hasAuthority("_VERANSTALTER")) {
-            System.out.println("Authority: _VERANSTALTER!!!!!!!!!!");
-            return partyService.getPartiesHostedBy(getUserID());
-        } else if (hasAuthority("_PERSONAL")) {
-            System.out.println("Authority: _PERSONAL!!!!!!!!!!");
-
-            String veranstalterId = getWorksForFromToken();
-            System.out.println("works for is:" + veranstalterId);
-            if (veranstalterId == null || veranstalterId.isEmpty()) {
-                throw new AccessDeniedException("Personal user is not associated with any Veranstalter.");
-            }
-
-            return partyService.getPartiesHostedBy(veranstalterId);
-        }
-
-        else {
-            throw new AccessDeniedException("User does not have access to any parties.");
-        }
-
+        return partyService.getAccessibleParties();
     }
 
 

@@ -6,11 +6,14 @@ import com.boersenparty.v_1_1.repository.PartyGuestRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.boersenparty.v_1_1.utils.TokenUtils.*;
 
 // TODO: "n_guests" als Abfrage funktion in PartyService
 
@@ -85,6 +88,31 @@ public class PartyService {
 
         return ResponseEntity.ok(existingParty);
     }
+
+
+    public List<Party> getAccessibleParties() {
+        String userId = getUserID(); // Retrieve the user ID from the token
+        System.out.println("keycloak userid is:" + userId);
+
+        if (hasAuthority("_VERANSTALTER")) {
+            System.out.println("Authority: _VERANSTALTER!!!!!!!!!!");
+            return getPartiesHostedBy(userId);
+        } else if (hasAuthority("_PERSONAL")) {
+            System.out.println("Authority: _PERSONAL!!!!!!!!!!");
+
+            String veranstalterId = getWorksForFromToken(); // Retrieve the associated Veranstalter ID
+            System.out.println("works for is:" + veranstalterId);
+
+            if (veranstalterId == null || veranstalterId.isEmpty()) {
+                throw new AccessDeniedException("Personal user is not associated with any Veranstalter.");
+            }
+
+            return getPartiesHostedBy(veranstalterId);
+        } else {
+            throw new AccessDeniedException("User does not have access to any parties.");
+        }
+    }
+
 
 
 }
