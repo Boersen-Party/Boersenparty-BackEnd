@@ -7,6 +7,7 @@ import com.boersenparty.v_1_1.repository.CalculatedPriceRepository;
 import com.boersenparty.v_1_1.repository.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ public class PriceUpdateController {
         this.productRepository = productRepository;
     }
 
+    // TODO: secure this endpoint
     @PostMapping("/{id}")
     public ResponseEntity<String> updatePrice(@PathVariable Long id, @RequestBody PriceUpdateEvent priceUpdateEvent) {
         // Fetch the product by ID
@@ -52,6 +54,17 @@ public class PriceUpdateController {
 
         System.out.println("PUC Price update received for product ID: " + id);
         return ResponseEntity.ok("Price update successful");
+    }
+
+    @PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
+    @GetMapping("/{id}")
+    public ResponseEntity<Double> getLatestPrice(@PathVariable Long id) {
+        List<CalculatedPrice> prices = calculatedPriceRepository.findByProductId(id);
+        if (prices == null || prices.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        double latestPrice = prices.get(prices.size() - 1).getPrice();
+        return ResponseEntity.ok(latestPrice);
     }
 }
 

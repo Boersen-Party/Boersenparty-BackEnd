@@ -57,6 +57,8 @@ public class PriceUpdateWorkerService {
             }
         }, 1, 10, TimeUnit.SECONDS);
 
+        //TODO: incorporate delay so that the Worker starts 10 seconds after creating a party
+
 
     }
 
