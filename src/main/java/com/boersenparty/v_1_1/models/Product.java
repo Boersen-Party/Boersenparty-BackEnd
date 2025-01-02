@@ -3,6 +3,8 @@ package com.boersenparty.v_1_1.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="tProducts")
 public class Product {
@@ -18,7 +20,10 @@ public class Product {
     private String name;
 
     private Integer pQuantity;
-    private Double price_base;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<CalculatedPrice> calculatedPrices;
     private Double price_min;
     private Double price_max;
 
@@ -62,12 +67,13 @@ public class Product {
         this.pQuantity = pQuantity;
     }
 
-    public Double getPrice_base() {
-        return price_base;
+
+    public List<CalculatedPrice> getCalculatedPrices() {
+        return calculatedPrices;
     }
 
-    public void setPrice_base(Double price_base) {
-        this.price_base = price_base;
+    public void setCalculatedPrices(List<CalculatedPrice> calculatedPrices) {
+        this.calculatedPrices = calculatedPrices;
     }
 
     public Double getPrice_min() {
@@ -112,11 +118,11 @@ public class Product {
 
 
 
-    public Product(Party party, String name, Integer pQuantity, Double price_base, Double price_min, Double price_max, boolean is_active, String image, String productType) {
+    public Product(Party party, String name, Integer pQuantity, List<CalculatedPrice> calculatedPrices, Double price_min, Double price_max, boolean is_active, String image, String productType) {
         this.party = party;
         this.name = name;
         this.pQuantity = pQuantity;
-        this.price_base = price_base;
+        this.calculatedPrices = calculatedPrices;
         this.price_min = price_min;
         this.price_max = price_max;
         this.is_active = (pQuantity > 0) ? true : false;
@@ -128,12 +134,12 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Products{" +
+        return "Product{" +
                 "id=" + id +
                 ", party=" + party +
                 ", name='" + name + '\'' +
                 ", pQuantity=" + pQuantity +
-                ", price_base=" + price_base +
+                //", calculatedPrices=" + calculatedPrices +
                 ", price_min=" + price_min +
                 ", price_max=" + price_max +
                 ", is_active=" + is_active +

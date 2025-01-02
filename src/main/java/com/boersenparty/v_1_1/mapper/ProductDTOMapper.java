@@ -1,10 +1,14 @@
 package com.boersenparty.v_1_1.mapper;
 
 import com.boersenparty.v_1_1.dto.ProductDTO;
+import com.boersenparty.v_1_1.models.CalculatedPrice;
 import com.boersenparty.v_1_1.models.Product;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import java.util.ArrayList;
+
 
 public class ProductDTOMapper {
 
@@ -18,7 +22,12 @@ public class ProductDTOMapper {
         productDTO.setId(product.getId());
         productDTO.setName(product.getName());
         productDTO.setpQuantity(product.getpQuantity());
-        productDTO.setPrice_base(product.getPrice_base());
+
+        // Extract the price_base from the first CalculatedPrice in the list
+        if (product.getCalculatedPrices() != null && !product.getCalculatedPrices().isEmpty()) {
+            productDTO.setPrice_base(product.getCalculatedPrices().get(0).getPrice());
+        }
+
         productDTO.setPrice_min(product.getPrice_min());
         productDTO.setPrice_max(product.getPrice_max());
         productDTO.setIs_active(product.isIs_active());
@@ -28,6 +37,7 @@ public class ProductDTOMapper {
         return productDTO;
     }
 
+    // Convert ProductDTO to Product entity
     public static Product toEntity(ProductDTO productDTO) {
         if (productDTO == null) {
             return null;
@@ -36,7 +46,15 @@ public class ProductDTOMapper {
         Product product = new Product();
         product.setName(productDTO.getName());
         product.setpQuantity(productDTO.getpQuantity());
-        product.setPrice_base(productDTO.getPrice_base());
+
+        // Create a new CalculatedPrice list and add the first entry based on price_base
+        if (productDTO.getPrice_base() != null) {
+            List<CalculatedPrice> calculatedPrices = new ArrayList<>();
+            CalculatedPrice calculatedPrice = new CalculatedPrice(product, productDTO.getPrice_base());
+            calculatedPrices.add(calculatedPrice);
+            product.setCalculatedPrices(calculatedPrices);
+        }
+
         product.setPrice_min(productDTO.getPrice_min());
         product.setPrice_max(productDTO.getPrice_max());
         product.setIs_active(productDTO.isIs_active());
@@ -60,4 +78,5 @@ public class ProductDTOMapper {
         return productDTOs.stream().map(ProductDTOMapper::toEntity).collect(Collectors.toList());
     }
 }
+
 
