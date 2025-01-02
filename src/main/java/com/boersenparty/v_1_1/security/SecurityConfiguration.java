@@ -31,19 +31,28 @@ public class SecurityConfiguration {
     @Value("${application.client}")
     public String clientName;
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
-        http
-                .cors(Customizer.withDefaults());
-        http.authorizeHttpRequests((authorize) -> authorize.anyRequest().authenticated()).oauth2ResourceServer(
-                (oauth2) -> oauth2.jwt(jwt -> jwt.decoder(JwtDecoders.fromIssuerLocation(issuerUri))
-                        .jwtAuthenticationConverter(customJwtAuthencationConverter())));
+
+        http.cors(Customizer.withDefaults());
+
+        http.authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers("/price-update/**").permitAll() // Allow unauthenticated access to this endpoint
+                        .anyRequest().authenticated() // Require authentication for all other endpoints
+                )
+                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
+                        .decoder(JwtDecoders.fromIssuerLocation(issuerUri))
+                        .jwtAuthenticationConverter(customJwtAuthencationConverter()))
+                );
+
         http.sessionManagement(sessionAuthenticationStrategy -> sessionAuthenticationStrategy
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
+
 
     @Bean
     public JwtAuthenticationConverter customJwtAuthencationConverter() {

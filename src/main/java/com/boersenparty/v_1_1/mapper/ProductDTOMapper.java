@@ -57,7 +57,7 @@ public class ProductDTOMapper {
 
         product.setPrice_min(productDTO.getPrice_min());
         product.setPrice_max(productDTO.getPrice_max());
-        product.setIs_active(productDTO.isIs_active());
+        product.setIs_active((product.getpQuantity() > 0) ? true : false);
         product.setImageURL(productDTO.getImageURL());
         product.setProductType(productDTO.getProductType());
 

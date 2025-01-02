@@ -1,5 +1,4 @@
 package com.boersenparty.v_1_1.service;
-
 import com.boersenparty.v_1_1.events.PriceUpdateEvent;
 import com.boersenparty.v_1_1.models.CalculatedPrice;
 import com.boersenparty.v_1_1.models.Product;
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -35,59 +33,77 @@ public class PriceUpdateWorkerService {
         this.calculatedPriceRepository = calculatedPriceRepository;
         this.productRepository = productRepository;
         this.restTemplate = restTemplate;
+
     }
 
-    // A method that starts the price calculation worker for a given product
+    // Once a product is created, this worker starts
     public void startPriceUpdateWorker(Product product) {
         System.out.println("start PriceUpdateWorker called!!!");
 
         scheduler.scheduleAtFixedRate(() -> {
+            try {
 
-            // Fetch the tail element (last calculated price) from the calculatedPrices list
-            List<CalculatedPrice> calculatedPrices = product.getCalculatedPrices();
-            System.out.println("caluclated prices list:" + calculatedPrices);
-            CalculatedPrice calculatedPrice = null;
+                //calculate stock market-like price
+                double newPrice = calculatePriceBasedOnCurrent(product);
 
-            if (calculatedPrices != null && !calculatedPrices.isEmpty()) {
-                calculatedPrice = calculatedPrices.get(calculatedPrices.size() - 1);
+                CalculatedPrice updatedCalculatedPrice = new CalculatedPrice(product, newPrice);
+                System.out.println("updatedCalculated Price is: " + updatedCalculatedPrice);
+                calculatedPriceRepository.save(updatedCalculatedPrice);
+
+                // webhook
+                triggerPriceUpdateWebhook(updatedCalculatedPrice);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            // Calculate the new price based on the current price
-            double newPrice = calculatePriceBasedOnCurrent(calculatedPrice);
-
-            // Save the updated price with the current time
-            CalculatedPrice updatedCalculatedPrice = new CalculatedPrice(product, newPrice);
-            System.out.println("updatedCalculated Price is: " + updatedCalculatedPrice);
-            //calculatedPriceRepository.save(updatedCalculatedPrice);
-            System.out.println("calculated price looks like this in db:");
-            System.out.println(calculatedPriceRepository.save(updatedCalculatedPrice));
-
-
-            // Send the updated price to the webhook callback URL
-            triggerPriceUpdateWebhook(updatedCalculatedPrice);
-        }, 0, 10, TimeUnit.SECONDS);  // Adjust the schedule as needed (1 hour interval)
+        }, 1, 10, TimeUnit.SECONDS);
 
 
     }
 
-    // Calculate the new price based on the current price and price range
-    private double calculatePriceBasedOnCurrent(CalculatedPrice calculatedPrice) {
-        double currentPrice = calculatedPrice.getPrice();
-        Product product = calculatedPrice.getProduct();
+    private double calculatePriceBasedOnCurrent(Product product) {
+        if (product == null) {
+            throw new IllegalArgumentException("Product cannot be null");
+        }
 
-        double priceAdjustmentFactor = 0.05;
-        double priceRangeFactor = (product.getPrice_max() - product.getPrice_min()) * priceAdjustmentFactor;
-        double newPrice = currentPrice + priceRangeFactor;
+        // latest price
+        List<CalculatedPrice> calculatedPrices = calculatedPriceRepository.findByProductId(product.getId());
 
+        double currentPrice = product.getPrice_min(); // Default
+        if (calculatedPrices != null && !calculatedPrices.isEmpty()) {
+            CalculatedPrice latestCalculatedPrice = calculatedPrices.get(calculatedPrices.size() - 1);
+            currentPrice = latestCalculatedPrice.getPrice();
+        }
+
+        double baseStepSize = 0.4;
+        //based on stock
+        if (product.getpQuantity() >= 1 && product.getpQuantity() <= 15) {
+            baseStepSize = 1.5;
+        } else if (product.getpQuantity() >= 50 && product.getpQuantity() <= 60) {
+            baseStepSize = 0.2;
+        }
+
+        // more randomness
+        double randomStepSize = baseStepSize * (0.5 + Math.random()); // Random multiplier between 0.5 and 1.5
+
+        double randomFactor = Math.random() > 0.5 ? 1 : -1; //  direction
+        double randomMagnitude = randomStepSize * (Math.random() * 2);
+        double newPrice = currentPrice + randomFactor * randomMagnitude;
+
+
+        //range
         if (newPrice < product.getPrice_min()) {
             newPrice = product.getPrice_min();
         } else if (newPrice > product.getPrice_max()) {
             newPrice = product.getPrice_max();
         }
 
-        return newPrice;
+        return Math.floor(newPrice * 100) / 100.0;
     }
 
-    // Send the updated price to the webhook (using the price callback URL)
+
+
+
+    // Send the updated price to the webhook
     private void triggerPriceUpdateWebhook(CalculatedPrice calculatedPrice) {
         System.out.println("triggerPriceUpdateWebhook called!");
         String url = callbackUrl + "/" + calculatedPrice.getProduct().getId();
