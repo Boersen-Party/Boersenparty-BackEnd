@@ -52,7 +52,9 @@ public class CalculatedPrice {
         this.price = price;
     }
 
-    public CalculatedPrice(){}
+    public CalculatedPrice(){
+        this.time = LocalDateTime.now();
+    }
 
     public CalculatedPrice(Product product, Double price_base) {
         System.out.println("CalculatedPrice constructor called!");

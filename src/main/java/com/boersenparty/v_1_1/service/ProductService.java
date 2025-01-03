@@ -48,9 +48,23 @@ public class ProductService {
                 .orElseThrow(() -> new IllegalArgumentException("Party not found with ID: " + partyId));
 
         return party.getProducts().stream()
-                .map(ProductDTOMapper::toDTO)
+                .map(product -> {
+                    ProductDTO dto = ProductDTOMapper.toDTO(product);
+
+                    if (product.getCalculatedPrices() != null) { // Check if the list is not null
+                        if (!product.getCalculatedPrices().isEmpty()) { // If the list is not empty
+                            CalculatedPrice latestPrice = product.getCalculatedPrices()
+                                    .get(product.getCalculatedPrices().size() - 1);
+                            dto.setLatestCalculatedPrice(latestPrice.getPrice());
+                        }
+                    }
+
+                    return dto;
+                })
                 .toList();
     }
+
+
 
     public ProductDTO createProduct(ProductDTO productDTO, Long partyId) {
         System.out.println("Incoming ProductDTO: " + productDTO);
@@ -64,7 +78,17 @@ public class ProductService {
         Product product = ProductDTOMapper.toEntity(productDTO);
         System.out.println("Mapping DTO into Product object:" + product);
         product.setParty(party);
+
+
+
+
         Product savedProduct = productRepository.save(product);
+
+        //maybe other way around
+        CalculatedPrice initialCalculatedPrice = new CalculatedPrice();
+        initialCalculatedPrice.setPrice(productDTO.getLatestCalculatedPrice());
+        initialCalculatedPrice.setProduct(product);
+        System.out.println("SAVING CALUCLATED PRICEEEE:" + calculatedPriceRepository.save(initialCalculatedPrice));
 
 
         //at the very start, the base_price is recieved from the client request, the generated price worker

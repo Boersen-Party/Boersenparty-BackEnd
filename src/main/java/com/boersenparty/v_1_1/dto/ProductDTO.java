@@ -4,12 +4,13 @@ public class ProductDTO {
     private Long id;
     private String name;
     private Integer pQuantity;
-    private Double price_base;
     private Double price_min;
     private Double price_max;
     private boolean is_active;
     private String imageURL;
     private String productType;
+
+    private Double latestCalculatedPrice;
 
 
     @Override
@@ -18,13 +19,22 @@ public class ProductDTO {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", pQuantity=" + pQuantity +
-                ", price_base=" + price_base +
+
                 ", price_min=" + price_min +
                 ", price_max=" + price_max +
                 ", is_active=" + is_active +
                 ", imageURL='" + imageURL + '\'' +
                 ", productType='" + productType + '\'' +
+                ", latestCalculatedPrice=" + latestCalculatedPrice +
                 '}';
+    }
+
+    public Double getLatestCalculatedPrice() {
+        return latestCalculatedPrice;
+    }
+
+    public void setLatestCalculatedPrice(Double latestCalculatedPrice) {
+        this.latestCalculatedPrice = latestCalculatedPrice;
     }
 
     public Long getId() {
@@ -51,13 +61,7 @@ public class ProductDTO {
         this.pQuantity = pQuantity;
     }
 
-    public Double getPrice_base() {
-        return price_base;
-    }
 
-    public void setPrice_base(Double price_base) {
-        this.price_base = price_base;
-    }
 
     public Double getPrice_min() {
         return price_min;

@@ -9,10 +9,8 @@ import java.util.stream.Collectors;
 
 import java.util.ArrayList;
 
-
 public class ProductDTOMapper {
 
-    // Convert Product entity to ProductDTO
     public static ProductDTO toDTO(Product product) {
         if (product == null) {
             return null;
@@ -23,9 +21,10 @@ public class ProductDTOMapper {
         productDTO.setName(product.getName());
         productDTO.setpQuantity(product.getpQuantity());
 
-        // Extract the price_base from the first CalculatedPrice in the list
         if (product.getCalculatedPrices() != null && !product.getCalculatedPrices().isEmpty()) {
-            productDTO.setPrice_base(product.getCalculatedPrices().get(0).getPrice());
+            productDTO.setLatestCalculatedPrice(
+                    product.getCalculatedPrices().get(product.getCalculatedPrices().size() - 1).getPrice()
+            );
         }
 
         productDTO.setPrice_min(product.getPrice_min());
@@ -37,7 +36,6 @@ public class ProductDTOMapper {
         return productDTO;
     }
 
-    // Convert ProductDTO to Product entity
     public static Product toEntity(ProductDTO productDTO) {
         if (productDTO == null) {
             return null;
@@ -47,17 +45,16 @@ public class ProductDTOMapper {
         product.setName(productDTO.getName());
         product.setpQuantity(productDTO.getpQuantity());
 
-        // Create a new CalculatedPrice list and add the first entry based on price_base
-        if (productDTO.getPrice_base() != null) {
+        if (productDTO.getLatestCalculatedPrice() != null) {
             List<CalculatedPrice> calculatedPrices = new ArrayList<>();
-            CalculatedPrice calculatedPrice = new CalculatedPrice(product, productDTO.getPrice_base());
-            calculatedPrices.add(calculatedPrice);
+            CalculatedPrice initialPrice = new CalculatedPrice(product, productDTO.getLatestCalculatedPrice());
+            calculatedPrices.add(initialPrice);
             product.setCalculatedPrices(calculatedPrices);
         }
 
         product.setPrice_min(productDTO.getPrice_min());
         product.setPrice_max(productDTO.getPrice_max());
-        product.setIs_active((product.getpQuantity() > 0) ? true : false);
+        product.setIs_active(product.getpQuantity() > 0);
         product.setImageURL(productDTO.getImageURL());
         product.setProductType(productDTO.getProductType());
 
@@ -71,6 +68,7 @@ public class ProductDTOMapper {
         return products.stream().map(ProductDTOMapper::toDTO).collect(Collectors.toList());
     }
 
+    // Convert list of ProductDTOs to list of Product entities
     public static List<Product> toEntityList(List<ProductDTO> productDTOs) {
         if (productDTOs == null || productDTOs.isEmpty()) {
             return List.of();
@@ -78,5 +76,6 @@ public class ProductDTOMapper {
         return productDTOs.stream().map(ProductDTOMapper::toEntity).collect(Collectors.toList());
     }
 }
+
 
 
