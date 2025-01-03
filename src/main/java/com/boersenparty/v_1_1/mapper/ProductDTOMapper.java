@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import java.util.ArrayList;
 
+
 public class ProductDTOMapper {
 
     public static ProductDTO toDTO(Product product) {
@@ -22,9 +23,10 @@ public class ProductDTOMapper {
         productDTO.setpQuantity(product.getpQuantity());
 
         if (product.getCalculatedPrices() != null && !product.getCalculatedPrices().isEmpty()) {
-            productDTO.setLatestCalculatedPrice(
-                    product.getCalculatedPrices().get(product.getCalculatedPrices().size() - 1).getPrice()
-            );
+            // Set the latest price and price update timestamp
+            CalculatedPrice latestPrice = product.getCalculatedPrices().get(product.getCalculatedPrices().size() - 1);
+            productDTO.setLatestCalculatedPrice(latestPrice.getPrice());
+            productDTO.setPriceUpdatedAt(latestPrice.getTime());  // Assuming CalculatedPrice has a timestamp field
         }
 
         productDTO.setPrice_min(product.getPrice_min());
@@ -47,7 +49,9 @@ public class ProductDTOMapper {
 
         if (productDTO.getLatestCalculatedPrice() != null) {
             List<CalculatedPrice> calculatedPrices = new ArrayList<>();
+            // Assuming you have the price update timestamp when setting the price
             CalculatedPrice initialPrice = new CalculatedPrice(product, productDTO.getLatestCalculatedPrice());
+            initialPrice.setTime(productDTO.getPriceUpdatedAt()); // Assuming you can set the timestamp in the CalculatedPrice
             calculatedPrices.add(initialPrice);
             product.setCalculatedPrices(calculatedPrices);
         }
@@ -68,7 +72,6 @@ public class ProductDTOMapper {
         return products.stream().map(ProductDTOMapper::toDTO).collect(Collectors.toList());
     }
 
-    // Convert list of ProductDTOs to list of Product entities
     public static List<Product> toEntityList(List<ProductDTO> productDTOs) {
         if (productDTOs == null || productDTOs.isEmpty()) {
             return List.of();
@@ -76,6 +79,7 @@ public class ProductDTOMapper {
         return productDTOs.stream().map(ProductDTOMapper::toEntity).collect(Collectors.toList());
     }
 }
+
 
 
 

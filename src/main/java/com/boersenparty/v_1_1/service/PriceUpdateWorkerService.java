@@ -91,16 +91,18 @@ public class PriceUpdateWorkerService {
         double randomMagnitude = randomStepSize * (Math.random() * 2);
         double newPrice = currentPrice + randomFactor * randomMagnitude;
 
+        // Tolerance to avoid getting stuck at price_min or price_max
+        double tolerance = 0.01;
 
-        //range
-        if (newPrice < product.getPrice_min()) {
-            newPrice = product.getPrice_min();
-        } else if (newPrice > product.getPrice_max()) {
-            newPrice = product.getPrice_max();
+        if (newPrice <= product.getPrice_min() + tolerance) {
+            newPrice = product.getPrice_min() + tolerance;
+        } else if (newPrice >= product.getPrice_max() - tolerance) {
+            newPrice = product.getPrice_max() - tolerance;
         }
 
-        return Math.floor(newPrice * 100) / 100.0;
+        return Math.ceil(newPrice * 100) / 100.0;
     }
+
 
 
 

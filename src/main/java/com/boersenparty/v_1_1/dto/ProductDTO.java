@@ -1,5 +1,9 @@
 package com.boersenparty.v_1_1.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.time.LocalDateTime;
+
 public class ProductDTO {
     private Long id;
     private String name;
@@ -12,6 +16,8 @@ public class ProductDTO {
 
     private Double latestCalculatedPrice;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime PriceUpdatedAt;
 
     @Override
     public String toString() {
@@ -19,14 +25,22 @@ public class ProductDTO {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", pQuantity=" + pQuantity +
-
                 ", price_min=" + price_min +
                 ", price_max=" + price_max +
                 ", is_active=" + is_active +
                 ", imageURL='" + imageURL + '\'' +
                 ", productType='" + productType + '\'' +
                 ", latestCalculatedPrice=" + latestCalculatedPrice +
+                ", PriceUpdatedAt=" + PriceUpdatedAt +
                 '}';
+    }
+
+    public LocalDateTime getPriceUpdatedAt() {
+        return PriceUpdatedAt;
+    }
+
+    public void setPriceUpdatedAt(LocalDateTime priceUpdatedAt) {
+        PriceUpdatedAt = priceUpdatedAt;
     }
 
     public Double getLatestCalculatedPrice() {
@@ -60,8 +74,6 @@ public class ProductDTO {
     public void setpQuantity(Integer pQuantity) {
         this.pQuantity = pQuantity;
     }
-
-
 
     public Double getPrice_min() {
         return price_min;

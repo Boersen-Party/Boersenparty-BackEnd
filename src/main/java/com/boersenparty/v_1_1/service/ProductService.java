@@ -51,8 +51,8 @@ public class ProductService {
                 .map(product -> {
                     ProductDTO dto = ProductDTOMapper.toDTO(product);
 
-                    if (product.getCalculatedPrices() != null) { // Check if the list is not null
-                        if (!product.getCalculatedPrices().isEmpty()) { // If the list is not empty
+                    if (product.getCalculatedPrices() != null) {
+                        if (!product.getCalculatedPrices().isEmpty()) {
                             CalculatedPrice latestPrice = product.getCalculatedPrices()
                                     .get(product.getCalculatedPrices().size() - 1);
                             dto.setLatestCalculatedPrice(latestPrice.getPrice());
