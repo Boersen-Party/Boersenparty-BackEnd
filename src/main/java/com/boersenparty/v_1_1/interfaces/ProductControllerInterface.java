@@ -14,8 +14,8 @@ public interface ProductControllerInterface {
     @GetMapping(path="/{party_id}/products")
     public List<ProductDTO> getProducts(@PathVariable Long party_id);
 
-    @GetMapping(path="/{party_id}/products/{product_id}")
-    public Optional<Product> getProduct(@PathVariable Long party_id, @PathVariable Long product_id);
+    //@GetMapping(path="/{party_id}/products/{product_id}")
+    //public Optional<Product> getProduct(@PathVariable Long party_id, @PathVariable Long product_id);
 
     @DeleteMapping(path="/{party_id}/products/{product_id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long party_id, @PathVariable Long product_id);

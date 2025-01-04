@@ -12,7 +12,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = true) //probably should be optional = false
+    @ManyToOne(fetch = FetchType.EAGER, optional = false) //probably should be optional = false
     @JoinColumn(name = "party_id", nullable = true)
     @JsonIgnore
     private Party party;
