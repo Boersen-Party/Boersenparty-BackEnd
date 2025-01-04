@@ -25,8 +25,8 @@ public interface ProductControllerInterface {
                                                  ProductDTO productDTO, @PathVariable Long party_id);
 
     @PutMapping(path="/{party_id}/products/{product_id}")
-    public ResponseEntity<Product> updateProduct(
-            @RequestBody(required = true) Product product,
+    public ResponseEntity<ProductDTO> updateProduct(
+            @RequestBody(required = true) ProductDTO productDTO,
             @PathVariable Long party_id,
             @PathVariable Long product_id);
 

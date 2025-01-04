@@ -9,6 +9,7 @@ import com.boersenparty.v_1_1.models.Product;
 import com.boersenparty.v_1_1.repository.CalculatedPriceRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
 import com.boersenparty.v_1_1.repository.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -117,5 +118,30 @@ public class ProductService {
         }
 
         productRepository.delete(product);
+    }
+
+    public ProductDTO updateProduct(ProductDTO productDTO, Long partyId, Long productId) {
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + productId));
+
+        Party party = partyRepository.findById(partyId)
+                .orElseThrow(() -> new EntityNotFoundException("Party not found with ID: " + partyId));
+
+        if (!existingProduct.getParty().getId().equals(partyId)) {
+            throw new IllegalArgumentException("Product does not belong to the specified party.");
+        }
+
+        existingProduct.setName(productDTO.getName());
+        existingProduct.setProductType(productDTO.getProductType());
+        existingProduct.setPrice_max(productDTO.getPrice_max());
+        existingProduct.setPrice_min(productDTO.getPrice_min());
+
+        //initial/base price will explicitly not be altered with a post
+        existingProduct.setpQuantity(productDTO.getpQuantity());
+        existingProduct.setImageURL(productDTO.getImageURL());
+
+        Product savedProduct = productRepository.save(existingProduct);
+
+        return ProductDTOMapper.toDTO(savedProduct);
     }
 }

@@ -34,43 +34,14 @@ public class ProductController implements ProductControllerInterface {
     }
 
 
-
-
-    /*
-    @Override
-    @PreAuthorize("hasAuthority('_VERANSTALTER')")
-    @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<String> deleteProduct(Long party_id,  Long product_id) {
-        productService.deleteProduct(party_id, product_id);
-        return ResponseEntity.ok("Product with ID:" + product_id + "deleted successfully");
-    }
-    */
-
-
     @Override
     @PreAuthorize("hasAuthority('_VERANSTALTER')")
     public ResponseEntity<String> deleteProduct(Long party_id,  Long product_id) {
-        // Log the entire request object for detailed debugging
-
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-        System.out.println("AM I EVEN ENTERING deletePRODUCTS????");
-
 
         try {
-            // Call the service to delete the product
             productService.deleteProduct(party_id, product_id);
-
             return ResponseEntity.ok("Product with ID: " + product_id + " deleted successfully");
         } catch (Exception e) {
-            // Log error and give detailed message
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error deleting product with ID: " + product_id + ". " + e.getMessage());
         }
@@ -84,11 +55,10 @@ public class ProductController implements ProductControllerInterface {
     }
 
     @Override
-    public ResponseEntity<Product> updateProduct(
-             Product product,
-             Long party_id,
-             Long product_id){
-        throw new UnsupportedOperationException("Method not implemented yet");
+    @PreAuthorize("hasAuthority('_VERANSTALTER')")
+    public ResponseEntity<ProductDTO> updateProduct(ProductDTO productDTO, Long party_id, Long product_id){
+        ProductDTO updatedProductDTO = productService.updateProduct(productDTO, party_id, product_id);
+        return ResponseEntity.ok(updatedProductDTO);
     }
 
 
