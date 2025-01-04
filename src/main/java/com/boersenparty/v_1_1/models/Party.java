@@ -17,7 +17,6 @@ public class Party {
     private String hostedBy;
 
 
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_date;
 
@@ -31,6 +30,8 @@ public class Party {
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Product> products;
 
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List <Event> events;
 
     public Party(){}
 
@@ -133,4 +134,11 @@ public class Party {
         this.products = products;
     }
 
+    public List<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<Event> events) {
+        this.events = events;
+    }
 }

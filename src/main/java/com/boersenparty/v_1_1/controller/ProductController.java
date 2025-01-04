@@ -24,10 +24,10 @@ public class ProductController implements ProductControllerInterface {
         this.productService = productService;
     }
 
-    //@Override
-    //public Optional<Product> getProduct(Long party_id, Long product_id) {
+
 
     @Override
+    @PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
     public List<ProductDTO> getProducts(Long party_id) {
         return productService.getProducts(party_id);
     }

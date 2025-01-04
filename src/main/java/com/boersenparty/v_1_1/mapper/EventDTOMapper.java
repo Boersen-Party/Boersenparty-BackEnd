@@ -1,7 +1,8 @@
 package com.boersenparty.v_1_1.mapper;
-
 import com.boersenparty.v_1_1.dto.EventDTO;
 import com.boersenparty.v_1_1.models.Event;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EventDTOMapper {
 
@@ -31,5 +32,11 @@ public class EventDTOMapper {
         event.setDuration(eventDTO.getDuration());
 
         return event;
+    }
+
+    public static List<EventDTO> toDTOList(List<Event> events) {
+        return events.stream()
+                .map(EventDTOMapper::toDTO)
+                .collect(Collectors.toList());
     }
 }
