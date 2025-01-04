@@ -4,19 +4,22 @@ import com.boersenparty.v_1_1.models.CalculatedPrice;
 import com.boersenparty.v_1_1.models.Product;
 import com.boersenparty.v_1_1.repository.CalculatedPriceRepository;
 import com.boersenparty.v_1_1.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.*;
 
 
 @Service
 @EnableScheduling
 public class PriceUpdateWorkerService {
+    @PersistenceContext
+    private EntityManager entityManager;
     @Value("${webhook_price.callback.url}")
     private String callbackUrl;
 
@@ -25,6 +28,7 @@ public class PriceUpdateWorkerService {
     private final RestTemplate restTemplate; // For sending webhook updates
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+    private final Map<Long, ScheduledFuture<?>> productTasks = new ConcurrentHashMap<>();
 
 
     public PriceUpdateWorkerService(CalculatedPriceRepository calculatedPriceRepository,
@@ -37,30 +41,42 @@ public class PriceUpdateWorkerService {
     }
 
     // Once a product is created, this worker starts
-    public void startPriceUpdateWorker(Product product) {
-        System.out.println("start PriceUpdateWorker called!!!");
-
-        scheduler.scheduleAtFixedRate(() -> {
+    public void startPriceUpdateWorker(Long productId) {
+        //sodass der UpdateWorker beendet wird, wenn das bearbeitete Produkt gelöscht wird
+        ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {
             try {
+                Product product = productRepository.findById(productId)
+                        .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
 
-                //calculate stock market-like price
                 double newPrice = calculatePriceBasedOnCurrent(product);
 
                 CalculatedPrice updatedCalculatedPrice = new CalculatedPrice(product, newPrice);
-                System.out.println("updatedCalculated Price is: " + updatedCalculatedPrice);
+                System.out.println("Updated Calculated Price: " + updatedCalculatedPrice);
+
                 calculatedPriceRepository.save(updatedCalculatedPrice);
 
-                // webhook
+                //  webhook
                 triggerPriceUpdateWebhook(updatedCalculatedPrice);
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+                stopPriceUpdateWorker(productId); // wenn Produkt gelöscht
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 1, 10, TimeUnit.SECONDS);
 
-        //TODO: incorporate delay so that the Worker starts 10 seconds after creating a party
-
-
+        // für das terminieren von Workern
+        productTasks.put(productId, future);
     }
+
+    public void stopPriceUpdateWorker(Long productId) {
+        ScheduledFuture<?> future = productTasks.remove(productId);
+        if (future != null) {
+            future.cancel(true); // Cancel the task
+            System.out.println("Stopped price update worker for product ID: " + productId);
+        }
+    }
+
 
     private double calculatePriceBasedOnCurrent(Product product) {
         if (product == null) {
@@ -104,17 +120,10 @@ public class PriceUpdateWorkerService {
     }
 
 
-
-
-
-    // Send the updated price to the webhook
+    // Updated price werden hier geschickt
     private void triggerPriceUpdateWebhook(CalculatedPrice calculatedPrice) {
-        System.out.println("triggerPriceUpdateWebhook called!");
         String url = callbackUrl + "/" + calculatedPrice.getProduct().getId();
-        System.out.println("POSTing to: " + url);
         PriceUpdateEvent priceUpdateEvent = new PriceUpdateEvent(calculatedPrice.getProduct().getId(), calculatedPrice);
-        System.out.println("PriceUpdateEvent looks like:" + priceUpdateEvent);
-        // Send the updated price to the webhook URL
         restTemplate.postForEntity(url, priceUpdateEvent, Void.class);
     }
 }

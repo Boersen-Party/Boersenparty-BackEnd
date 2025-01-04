@@ -12,7 +12,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true) //probably should be optional = false
     @JoinColumn(name = "party_id", nullable = true)
     @JsonIgnore
     private Party party;
@@ -21,7 +21,7 @@ public class Product {
 
     private Integer pQuantity;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "product", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     @JsonIgnore
     private List<CalculatedPrice> calculatedPrices;
     private Double price_min;

@@ -24,10 +24,11 @@ public class Party {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime end_date;
 
-    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = false)
+    // cascadetype.REMOVE ?
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PartyGuest> partyGuests;
 
-    @OneToMany(mappedBy = "party", cascade = CascadeType.REMOVE, orphanRemoval = false)
+    @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Product> products;
 
 
@@ -63,7 +64,7 @@ public class Party {
                 ", name='" + name + '\'' +
                 ", start_date=" + start_date +
                 ", end_date=" + end_date +
-                ", partyGuests=" + partyGuests +
+                ", partyGuests=" + "NOT IMPLEMENTED YET" +
                 ", hosted_by='" + hostedBy + '\'' +
                 '}';
     }

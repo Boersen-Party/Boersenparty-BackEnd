@@ -17,7 +17,7 @@ public class CalculatedPrice {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime time;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "product_id", nullable = false) // Foreign key to Product
     private Product product;
 

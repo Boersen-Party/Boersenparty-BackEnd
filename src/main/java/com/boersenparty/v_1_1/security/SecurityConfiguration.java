@@ -2,11 +2,13 @@ package com.boersenparty.v_1_1.security;
 
 
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -39,8 +41,9 @@ public class SecurityConfiguration {
         http.cors(Customizer.withDefaults());
 
         http.authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers("/price-update/**").permitAll() // Allow unauthenticated access to this endpoint
-                        .anyRequest().authenticated() // Require authentication for all other endpoints
+                        .requestMatchers("/price-update/**").permitAll() // worker Endpoint
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() //kann möglicherweise weg
+                        .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(JwtDecoders.fromIssuerLocation(issuerUri))
@@ -53,7 +56,19 @@ public class SecurityConfiguration {
         return http.build();
     }
 
+    @Bean
+    protected CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfig.setAllowedHeaders(List.of("*"));
+        corsConfig.setAllowCredentials(true);
+        source.registerCorsConfiguration("/**", corsConfig);
+        return source;
+    }
 
+    
     @Bean
     public JwtAuthenticationConverter customJwtAuthencationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
@@ -66,10 +81,4 @@ public class SecurityConfiguration {
         return new CustomJwtGrantedAuthoritiesConverter(clientName);
     }
 
-    @Bean
-    protected CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", new CorsConfiguration().applyPermitDefaultValues());
-        return source;
-    }
 }

@@ -79,9 +79,6 @@ public class ProductService {
         System.out.println("Mapping DTO into Product object:" + product);
         product.setParty(party);
 
-
-
-
         Product savedProduct = productRepository.save(product);
 
         //maybe other way around
@@ -102,10 +99,23 @@ public class ProductService {
 
         System.out.println("calling startPriceUpdateWorker... with product:" + savedProduct);
         //triggers webhook 'Product Created'
-        this.priceUpdateWorkerService.startPriceUpdateWorker(savedProduct);
+        this.priceUpdateWorkerService.startPriceUpdateWorker(savedProduct.getId());
 
         return ProductDTOMapper.toDTO(savedProduct);
     }
 
 
+    public void deleteProduct(Long party_id, Long product_id) {
+        Party party = partyRepository.findById(party_id)
+                .orElseThrow(() -> new IllegalArgumentException("Party not found with ID: " + party_id));
+
+        Product product = productRepository.findById(product_id)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + product_id));
+
+        if (!product.getParty().equals(party)) {
+            throw new IllegalArgumentException("Product does not belong to this party");
+        }
+
+        productRepository.delete(product);
+    }
 }
