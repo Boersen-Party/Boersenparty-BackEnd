@@ -40,5 +40,11 @@ public class EventController implements EventControllerInterface {
         return ResponseEntity.ok(eventService.createEvent(eventDTO, party_id));
     }
 
+    @Override
+    public ResponseEntity<String> triggerEvent(Long party_id, Long event_id){
+        String triggeredEvent = eventService.triggerEvent(party_id, event_id);
+        return ResponseEntity.ok(triggeredEvent);
+    }
+
 
 }

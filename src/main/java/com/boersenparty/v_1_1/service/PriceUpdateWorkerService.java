@@ -2,7 +2,9 @@ package com.boersenparty.v_1_1.service;
 import com.boersenparty.v_1_1.events.PriceUpdateEvent;
 import com.boersenparty.v_1_1.models.CalculatedPrice;
 import com.boersenparty.v_1_1.models.Product;
+import com.boersenparty.v_1_1.models.Event;
 import com.boersenparty.v_1_1.repository.CalculatedPriceRepository;
+import com.boersenparty.v_1_1.repository.EventRepository;
 import com.boersenparty.v_1_1.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -24,18 +26,20 @@ public class PriceUpdateWorkerService {
     private String callbackUrl;
 
     private final CalculatedPriceRepository calculatedPriceRepository;
+    private final EventRepository eventRepository;
     private final ProductRepository productRepository;
-    private final RestTemplate restTemplate; // For sending webhook updates
+    private final RestTemplate restTemplate;
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private final Map<Long, ScheduledFuture<?>> productTasks = new ConcurrentHashMap<>();
 
 
     public PriceUpdateWorkerService(CalculatedPriceRepository calculatedPriceRepository,
-                                    ProductRepository productRepository,
+                                    ProductRepository productRepository, EventRepository eventRepository,
                                     RestTemplate restTemplate) {
         this.calculatedPriceRepository = calculatedPriceRepository;
         this.productRepository = productRepository;
+        this.eventRepository = eventRepository;
         this.restTemplate = restTemplate;
 
     }
@@ -126,5 +130,68 @@ public class PriceUpdateWorkerService {
         PriceUpdateEvent priceUpdateEvent = new PriceUpdateEvent(calculatedPrice.getProduct().getId(), calculatedPrice);
         restTemplate.postForEntity(url, priceUpdateEvent, Void.class);
     }
+
+    public void startTriggeredEventWorker(Event event) {
+        System.out.println("Applying triggered event: " + event.getType());
+
+        List<Product> products = productRepository.findAllByPartyId(event.getParty().getId());
+
+        for (Product product : products) {
+            stopPriceUpdateWorker(product.getId());
+
+            ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {
+                try {
+                    double adjustedPrice = calculatePriceBasedOnCurrent(product);
+
+                    if ("Boersencrash".equalsIgnoreCase(event.getType())) {
+                        adjustedPrice *= 0.5;
+                    } else if ("Happy Hour".equalsIgnoreCase(event.getType()) && "mit Alkohol".equalsIgnoreCase(product.getProductType())) {
+                        adjustedPrice *= 0.7;
+                    }
+
+                    CalculatedPrice calculatedPrice = new CalculatedPrice(product, adjustedPrice);
+                    calculatedPriceRepository.save(calculatedPrice);
+
+                    // Trigger webhook
+                    triggerPriceUpdateWebhook(calculatedPrice);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }, 0, 10, TimeUnit.SECONDS);
+
+            productTasks.put(product.getId(), future);
+        }
+
+        scheduler.schedule(() -> {
+            System.out.println("Event duration ended. Resuming normal price updates...");
+
+            for (Product product : products) {
+                ScheduledFuture<?> future = productTasks.get(product.getId());
+                if (future != null) {
+                    future.cancel(true); // Cancel the worker
+                    productTasks.remove(product.getId());
+                }
+            }
+
+            List<Event> allEvents = eventRepository.findAll();
+            for (Event _event : allEvents) {
+                _event.setIs_ongoing(false);
+                _event.setStartsAt(null);
+                _event.setEndsAt(null);
+            }
+            eventRepository.saveAll(allEvents);
+
+            // Restart workers for all products
+            List<Product> allProducts = productRepository.findAll();
+            allProducts.forEach(product -> startPriceUpdateWorker(product.getId()));
+
+            System.out.println("Normal price updates resumed.");
+        }, event.getDuration(), TimeUnit.MINUTES);
+    }
+
+
 }
+
+
 

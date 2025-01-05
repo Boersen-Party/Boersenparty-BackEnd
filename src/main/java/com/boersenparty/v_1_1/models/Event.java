@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
@@ -11,9 +12,41 @@ public class Event {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String type; //Happy Hour etc.
+    private String type; // BörsenCrash / Happy Hour  etc.
 
     private Integer duration;  // Duration in minutes
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime startsAt;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
+    private LocalDateTime endsAt;
+
+    private boolean is_ongoing;
+
+    public LocalDateTime getStartsAt() {
+        return startsAt;
+    }
+
+    public void setStartsAt(LocalDateTime startsAt) {
+        this.startsAt = startsAt;
+    }
+
+    public LocalDateTime getEndsAt() {
+        return endsAt;
+    }
+
+    public void setEndsAt(LocalDateTime endsAt) {
+        this.endsAt = endsAt;
+    }
+
+    public boolean isIs_ongoing() {
+        return is_ongoing;
+    }
+
+    public void setIs_ongoing(boolean is_ongoing) {
+        this.is_ongoing = is_ongoing;
+    }
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "party_id", nullable = true)
@@ -55,6 +88,9 @@ public class Event {
                 "id=" + id +
                 ", type='" + type + '\'' +
                 ", duration=" + duration +
+                ", startsAt=" + startsAt +
+                ", endsAt=" + endsAt +
+                ", is_ongoing=" + is_ongoing +
                 ", party=" + party +
                 '}';
     }

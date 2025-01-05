@@ -28,16 +28,10 @@ public interface EventControllerInterface {
     public ResponseEntity<EventDTO> createEvent(@RequestBody(required = true) EventDTO eventDTO, @PathVariable Long party_id);
 
 
-
-
-   /*       just rely on deletion and creating new event
     @PutMapping(path="/{party_id}/events/{event_id}")
-    public ResponseEntity<Event> updateEvent(
-            @RequestBody(required = true) Party party,
-            @PathVariable Long party_id,
-            @PathVariable Long event_id);
+    public ResponseEntity<String> triggerEvent(@PathVariable Long party_id, @PathVariable Long event_id);
 
 
-    */
+
 
 }

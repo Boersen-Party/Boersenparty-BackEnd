@@ -32,7 +32,7 @@ public class Product {
     private String imageURL;
 
     // TODO: productType table
-    private String productType = "beverage";
+    private String productType;
 
 
     public Long getId() {
