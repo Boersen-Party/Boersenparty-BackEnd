@@ -4,6 +4,7 @@ import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.PartyGuest;
 import com.boersenparty.v_1_1.repository.PartyGuestRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
+import com.boersenparty.v_1_1.utils.QRCodeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -12,6 +13,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.boersenparty.v_1_1.utils.TokenUtils.*;
 
@@ -38,16 +40,19 @@ public class PartyService {
 
 
     public Party createParty(Party party) {
-        // if you have ze berechtigung, kannste parties mache ohne Ende
-        // TODO: so check if user has permission here
-
         if (party.getName() == null) {
             throw new IllegalArgumentException("Party name cannot be null");
         }
-        return partyRepository.save(party);
 
+        String accessCode = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
+        party.setAccessCode(accessCode);
+        Party savedParty = partyRepository.save(party);
+
+        return savedParty;
     }
 
+
+    //
     public void joinParty(Long partyId) {
             Optional<Party> optionalParty = partyRepository.findById(partyId);
             if (optionalParty.isPresent()){

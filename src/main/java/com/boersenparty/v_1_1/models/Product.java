@@ -136,7 +136,7 @@ public class Product {
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", party=" + party +
+                ", party=" + "is happening :D" +
                 ", name='" + name + '\'' +
                 ", pQuantity=" + pQuantity +
                 //", calculatedPrices=" + calculatedPrices +

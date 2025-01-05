@@ -2,6 +2,7 @@ package com.boersenparty.v_1_1.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -13,6 +14,8 @@ public class Party {
     private Long id;
 
     private String name;
+    private String accessCode;
+
 
     private String hostedBy;
 
@@ -23,7 +26,6 @@ public class Party {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime end_date;
 
-    // cascadetype.REMOVE ?
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PartyGuest> partyGuests;
 
@@ -33,14 +35,20 @@ public class Party {
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Event> events;
 
+
+
     public Party(){}
 
+    /*
     public Party(List<Product> products){
         this.products = products;
-        System.out.println("Default Party Constructor is called");
+        this.accessCode = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
 
+    */
 
+
+/*
     public Party(String name, String hosted_by, List<Product> products) {
         this.products = products;
         System.out.println("First Party Constructor is called");
@@ -48,6 +56,7 @@ public class Party {
         this.hostedBy = hosted_by;
         this.start_date = LocalDateTime.now();
         this.end_date = this.start_date.plusDays(1);
+        this.accessCode = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
     }
     public Party(String name, LocalDateTime start_date, LocalDateTime end_date, List<Product> products) {
         this.products = products;
@@ -57,16 +66,21 @@ public class Party {
         this.end_date = end_date;
         this.hostedBy = "Partyveranstalter";
     }
+    */
+
 
     @Override
     public String toString() {
         return "Party{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", accessCode='" + accessCode + '\'' +
+                ", hostedBy='" + hostedBy + '\'' +
                 ", start_date=" + start_date +
                 ", end_date=" + end_date +
-                ", partyGuests=" + "NOT IMPLEMENTED YET" +
-                ", hosted_by='" + hostedBy + '\'' +
+                ", partyGuests=" + "coming soon" +
+                ", products=" + products +
+                ", events=" + events +
                 '}';
     }
 
@@ -77,6 +91,15 @@ public class Party {
     public Long getId() {
         return id;
     }
+
+    public String getAccessCode() {
+        return accessCode;
+    }
+
+    public void setAccessCode(String accessCode) {
+        this.accessCode = accessCode;
+    }
+
 
 
     public String getName() {
