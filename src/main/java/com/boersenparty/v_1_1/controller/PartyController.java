@@ -1,6 +1,8 @@
 package com.boersenparty.v_1_1.controller;
+import com.boersenparty.v_1_1.dto.JoinPartyRequest;
 import com.boersenparty.v_1_1.interfaces.PartyControllerInterface;
 import com.boersenparty.v_1_1.models.Party;
+import com.boersenparty.v_1_1.models.PartyGuest;
 import com.boersenparty.v_1_1.service.PartyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -66,9 +68,18 @@ public class PartyController implements PartyControllerInterface {
         return partyService.updateParty(party, party_id);
     }
 
+    // Join Party by Access Code, here accesCode is still a JSON that needs to be parsed
+    @Override
+    public ResponseEntity<PartyGuest> joinParty(JoinPartyRequest request) {
+        return partyService.joinParty(request.getAccessCode());
+    }
+
+    }
 
 
 
 
 
-}
+
+
+

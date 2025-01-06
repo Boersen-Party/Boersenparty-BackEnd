@@ -41,6 +41,7 @@ public class SecurityConfiguration {
         http.cors(Customizer.withDefaults());
 
         http.authorizeHttpRequests((authorize) -> authorize
+                        .requestMatchers(HttpMethod.POST, "/parties/rooms").permitAll() // Allow POST requests to /parties/rooms
                         .requestMatchers("/price-update/**").permitAll() // worker Endpoint
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() //kann möglicherweise weg
                         .anyRequest().authenticated()

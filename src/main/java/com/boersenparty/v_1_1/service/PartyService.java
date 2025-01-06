@@ -5,13 +5,17 @@ import com.boersenparty.v_1_1.models.PartyGuest;
 import com.boersenparty.v_1_1.repository.PartyGuestRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
 import com.boersenparty.v_1_1.utils.QRCodeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +27,8 @@ import static com.boersenparty.v_1_1.utils.TokenUtils.*;
 public class PartyService {
     private final PartyRepository partyRepository;
     private final PartyGuestRepository partyGuestRepository;
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public PartyService(PartyRepository partyRepository, PartyGuestRepository partyGuestRepository) {
         this.partyRepository = partyRepository;
@@ -53,16 +59,26 @@ public class PartyService {
 
 
     //
-    public void joinParty(Long partyId) {
-            Optional<Party> optionalParty = partyRepository.findById(partyId);
-            if (optionalParty.isPresent()){
-                PartyGuest partyGuest = new PartyGuest(optionalParty.get());
-                partyGuestRepository.save(partyGuest);
-            }
-            else { //change exception to http exception
-                throw new RuntimeException("Party not found with ID: " + partyId);
-            }
+    public ResponseEntity<PartyGuest> joinParty(String accessCode) {
+
+        System.out.println("Calling join Party");
+        Optional<Party> optionalParty = partyRepository.findByAccessCode(accessCode);
+
+        if (optionalParty.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
         }
+
+        Party party = optionalParty.get();
+        System.out.println("Gotten Party is:" + party);
+
+        PartyGuest partyGuest = new PartyGuest(party);
+        PartyGuest savedGuest = partyGuestRepository.save(partyGuest);
+
+        System.out.println("Returning OK ");
+
+        return ResponseEntity.ok(savedGuest);
+    }
+
 
     public Optional <Party> getParty(Long partyId) {
         Optional<Party> optionalParty = partyRepository.findById(partyId);

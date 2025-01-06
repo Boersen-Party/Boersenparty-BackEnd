@@ -17,7 +17,7 @@ public class PartyGuest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    private final UUID uuid;
+    private  UUID uuid;
 
 
     @OneToMany(mappedBy = "partyGuest", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -49,19 +49,13 @@ public class PartyGuest {
         this.party = party;
     }
 
-    public PartyGuest(){
-        System.out.println("Default Guest constructor is called");
-        this.uuid = UUID.randomUUID();
-    }
+    public PartyGuest(){}
 
-    public PartyGuest(Party party){
+
+    public PartyGuest(@NotNull Party party) {
         this.party = party;
-        this.uuid = UUID.randomUUID();
-        System.out.println("Second Guest constructor is called");
-
+        this.setUuid();
     }
-
-
 
     public List<Order> getOrders() {
         return orders;
@@ -83,6 +77,7 @@ public class PartyGuest {
         return uuid;
     }
 
+    public void setUuid(){this.uuid = UUID.randomUUID();}
 
     public void addOrder(Order order) {
         this.orders.add(order);

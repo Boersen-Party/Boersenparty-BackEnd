@@ -25,7 +25,7 @@ public class PriceUpdateController {
         this.productRepository = productRepository;
     }
 
-    // TODO: secure this endpoint
+
     @PostMapping("/{id}")
     public ResponseEntity<String> updatePrice(@PathVariable Long id, @RequestBody PriceUpdateEvent priceUpdateEvent) {
         // Fetch the product by ID
@@ -36,7 +36,6 @@ public class PriceUpdateController {
 
         Product product = optionalProduct.get();
 
-        // Create a new CalculatedPrice instance
         CalculatedPrice calculatedPrice = new CalculatedPrice();
         calculatedPrice.setProduct(product);
         calculatedPrice.setPrice(priceUpdateEvent.getCalculatedPrice().getPrice());
@@ -46,7 +45,6 @@ public class PriceUpdateController {
         System.out.println("CP DB looks like:" +        calculatedPriceRepository.save(calculatedPrice));
 
 
-        // Associate the new price with the product
         List<CalculatedPrice> calculatedPrices = product.getCalculatedPrices();
         calculatedPrices.add(calculatedPrice);
         product.setCalculatedPrices(calculatedPrices);
