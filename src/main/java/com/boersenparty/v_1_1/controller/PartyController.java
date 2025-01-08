@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.controller;
 import com.boersenparty.v_1_1.dto.JoinPartyRequest;
+import com.boersenparty.v_1_1.dto.JoinPartyResponse;
 import com.boersenparty.v_1_1.interfaces.PartyControllerInterface;
 import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.PartyGuest;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 public class PartyController implements PartyControllerInterface {
@@ -36,7 +38,7 @@ public class PartyController implements PartyControllerInterface {
 
      */
     @Override
-    @PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
+    //@PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
     public List<Party> getParties() {
         System.out.println("getParties is called in controller!");
         return partyService.getAccessibleParties();
@@ -70,11 +72,26 @@ public class PartyController implements PartyControllerInterface {
 
     // Join Party by Access Code, here accesCode is still a JSON that needs to be parsed
     @Override
-    public ResponseEntity<PartyGuest> joinParty(JoinPartyRequest request) {
+    public ResponseEntity<JoinPartyResponse> joinParty(JoinPartyRequest request) {
         return partyService.joinParty(request.getAccessCode());
     }
 
+    @GetMapping("/uuids/{uuid}")
+    public Long checkUUIDValidity(@PathVariable UUID uuid) {
+        return partyService.checkUUIDValidity(uuid);
     }
+
+    //für personaler
+    @GetMapping("/personal-party-id")
+    public ResponseEntity<Long> getPartyId(@RequestParam("worksFor") String worksFor) {
+        Long partyId = partyService.getPartyIdByHost(worksFor);
+        if (partyId == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(partyId);
+    }
+    }
+
 
 
 

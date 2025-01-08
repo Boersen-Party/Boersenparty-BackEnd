@@ -27,7 +27,6 @@ public class ProductController implements ProductControllerInterface {
 
 
     @Override
-    @PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
     public List<ProductDTO> getProducts(Long party_id) {
         return productService.getProducts(party_id);
     }

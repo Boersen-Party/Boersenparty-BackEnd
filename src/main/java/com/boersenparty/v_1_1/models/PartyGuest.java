@@ -29,7 +29,7 @@ public class PartyGuest {
         return "PartyGuest{" +
                 "id=" + id +
                 ", uuid=" + uuid +
-                ", orders=" + orders +
+                ", orders=" + "has some orders" +
                 ", party=" + party +
                 '}';
     }
@@ -73,8 +73,8 @@ public class PartyGuest {
         this.id = id;
     }
 
-    public UUID getUuid() {
-        return uuid;
+    public String getUuid() {
+        return String.valueOf(uuid);
     }
 
     public void setUuid(){this.uuid = UUID.randomUUID();}

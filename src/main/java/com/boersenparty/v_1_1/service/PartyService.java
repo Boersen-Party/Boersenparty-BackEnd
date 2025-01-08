@@ -1,10 +1,10 @@
 package com.boersenparty.v_1_1.service;
 
+import com.boersenparty.v_1_1.dto.JoinPartyResponse;
 import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.PartyGuest;
 import com.boersenparty.v_1_1.repository.PartyGuestRepository;
 import com.boersenparty.v_1_1.repository.PartyRepository;
-import com.boersenparty.v_1_1.utils.QRCodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -39,9 +38,21 @@ public class PartyService {
         System.out.println(partyRepository.findByHostedBy(userId));
         return partyRepository.findByHostedBy(userId);
     }
+    public Long checkUUIDValidity(UUID uuid) {
+        Optional<PartyGuest> partyGuest = partyGuestRepository.findByUuid(uuid);
+        return partyGuest.map(guest -> guest.getParty().getId()).orElse(null);  // Return partyId or null if not found
+    }
 
     public List<Party> getParties() {
         return partyRepository.findAll();
+    }
+
+    public Long getPartyIdByHost(String worksFor) {
+        List<Party> parties = partyRepository.findByHostedBy(worksFor);
+        if (parties.isEmpty()) {
+            return null;
+        }
+        return parties.get(0).getId();
     }
 
 
@@ -59,7 +70,7 @@ public class PartyService {
 
 
     //
-    public ResponseEntity<PartyGuest> joinParty(String accessCode) {
+    public ResponseEntity<JoinPartyResponse> joinParty(String accessCode) {
 
         System.out.println("Calling join Party");
         Optional<Party> optionalParty = partyRepository.findByAccessCode(accessCode);
@@ -75,8 +86,10 @@ public class PartyService {
         PartyGuest savedGuest = partyGuestRepository.save(partyGuest);
 
         System.out.println("Returning OK ");
-
-        return ResponseEntity.ok(savedGuest);
+        JoinPartyResponse response = new JoinPartyResponse();
+        response.setUuid(UUID.fromString(savedGuest.getUuid()));
+        response.setParty_id(party.getId());
+        return ResponseEntity.ok(response);
     }
 
 

@@ -12,4 +12,5 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     List<Party> findByHostedBy(String hostedBy);
     Optional<Party> findByAccessCode(String accessCode);
 
+
 }

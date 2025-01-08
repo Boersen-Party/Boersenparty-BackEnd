@@ -1,6 +1,7 @@
 package com.boersenparty.v_1_1.interfaces;
 
 import com.boersenparty.v_1_1.dto.JoinPartyRequest;
+import com.boersenparty.v_1_1.dto.JoinPartyResponse;
 import com.boersenparty.v_1_1.models.Party;
 import com.boersenparty.v_1_1.models.PartyGuest;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public interface PartyControllerInterface {
     public ResponseEntity<Party> createParty(@RequestBody(required = true) Party party);
 
     @PostMapping(path="/rooms")
-    public ResponseEntity<PartyGuest> joinParty(@RequestBody(required = true) JoinPartyRequest request);
+    public ResponseEntity<JoinPartyResponse> joinParty(@RequestBody(required = true) JoinPartyRequest request);
 
     @PutMapping(path="/{party_id}")
     public ResponseEntity<Party> updateParty(

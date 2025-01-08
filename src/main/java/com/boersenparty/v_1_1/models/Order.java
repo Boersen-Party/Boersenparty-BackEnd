@@ -15,17 +15,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", partyGuest=" + partyGuest +
-                ", party=" + party +
-                ", orderItems=" + orderItems +
-                ", is_paid=" + is_paid +
-                ", created_at=" + created_at +
-                '}';
-    }
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "partyguest_id", nullable = false)
@@ -57,17 +47,12 @@ public class Order {
 
     private boolean is_paid = false;
 
-    public Order() {
-    }
-
-    public Order(PartyGuest partyGuest, Party party) {
-        this.partyGuest = partyGuest;
-        this.party = party;
-    }
-
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm:ss")
-    private LocalDateTime created_at;
+    private LocalDateTime expires_at;
+
+    public Order() {
+    }
 
 
     public Long getId() {
@@ -78,5 +63,39 @@ public class Order {
         this.id = id;
     }
 
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
+    }
 
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
+    }
+
+    public boolean isIs_paid() {
+        return is_paid;
+    }
+
+    public void setIs_paid(boolean is_paid) {
+        this.is_paid = is_paid;
+    }
+
+    public LocalDateTime getExpires_at() {
+        return expires_at;
+    }
+
+    public void setExpires_at(LocalDateTime expires_at) {
+        this.expires_at = expires_at;
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", partyGuest=" + partyGuest +
+                ", party=" + party +
+                ", orderItems=" + orderItems +
+                ", is_paid=" + is_paid +
+                ", expires_at=" + expires_at +
+                '}';
+    }
 }
