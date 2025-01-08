@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Base64;
 
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 public class QRCodeController {
 
