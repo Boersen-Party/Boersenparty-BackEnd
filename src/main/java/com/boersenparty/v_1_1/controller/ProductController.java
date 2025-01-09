@@ -33,7 +33,7 @@ public class ProductController implements ProductControllerInterface {
 
 
     @Override
-    @PreAuthorize("hasAuthority('_VERANSTALTER')")
+   // @PreAuthorize("hasAuthority('_VERANSTALTER')")
     public ResponseEntity<String> deleteProduct(Long party_id,  Long product_id) {
 
         try {
@@ -47,13 +47,13 @@ public class ProductController implements ProductControllerInterface {
 
 
     @Override
-    @PreAuthorize("hasAuthority('_VERANSTALTER')")
+    //@PreAuthorize("hasAuthority('_VERANSTALTER')")
     public ResponseEntity<ProductDTO> createProduct(ProductDTO productDTO, Long party_id){
         return ResponseEntity.ok(productService.createProduct(productDTO, party_id));
     }
 
     @Override
-    @PreAuthorize("hasAuthority('_VERANSTALTER')")
+    //@PreAuthorize("hasAuthority('_VERANSTALTER')")
     public ResponseEntity<ProductDTO> updateProduct(ProductDTO productDTO, Long party_id, Long product_id){
         ProductDTO updatedProductDTO = productService.updateProduct(productDTO, party_id, product_id);
         return ResponseEntity.ok(updatedProductDTO);

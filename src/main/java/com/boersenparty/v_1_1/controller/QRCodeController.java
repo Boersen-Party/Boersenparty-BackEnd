@@ -26,7 +26,7 @@ public class QRCodeController {
     }
 
     //TODO: adjust the url
-    @PreAuthorize("hasAuthority('_PERSONAL')")
+    //@PreAuthorize("hasAuthority('_PERSONAL')")
     @GetMapping("/parties/{partyId}/qrcodes")
     public ResponseEntity<String> getQRCode(@PathVariable Long partyId) {
         Party party = partyRepository.findById(partyId)

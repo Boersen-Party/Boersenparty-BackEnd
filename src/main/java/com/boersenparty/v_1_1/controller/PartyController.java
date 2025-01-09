@@ -59,7 +59,7 @@ public class PartyController implements PartyControllerInterface {
 
 
     @Override
-    @PreAuthorize("hasAuthority('_VERANSTALTER')")
+    //@PreAuthorize("hasAuthority('_VERANSTALTER')")
     public ResponseEntity<Party> createParty(Party party) {
         System.out.println("party about to be created is:" + party);
         return ResponseEntity.ok(partyService.createParty(party));
