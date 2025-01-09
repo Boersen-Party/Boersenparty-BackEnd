@@ -49,15 +49,9 @@ public class SecurityConfiguration {
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 //.anyRequest().authenticated()
-        )
-                .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
-                        .decoder(JwtDecoders.fromIssuerLocation(issuerUri))
-                        .jwtAuthenticationConverter(customJwtAuthencationConverter()))
-                );
-        http.addFilterBefore(new PermitAllFilter("/parties/**"), BearerTokenAuthenticationFilter.class);
+        );
 
-        http.sessionManagement(sessionAuthenticationStrategy -> sessionAuthenticationStrategy
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
 
         return http.build();
     }
