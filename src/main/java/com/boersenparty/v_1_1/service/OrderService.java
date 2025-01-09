@@ -50,6 +50,10 @@ public class OrderService {
         return orderRepository.findByPartyIdAndPartyGuestId(party_id, guest_id);
     }
 
+    public List<Order> getOrdersByPartyGuestUuid(String uuid) {
+        return orderRepository.findByPartyGuestUuid(UUID.fromString(uuid));
+    }
+
     public void deleteOrder(Long partyId, Long guestId, Long orderId) {
         // naked delete for now, check if exists before deleting?
         System.out.println("to be implemented");
@@ -97,6 +101,10 @@ public class OrderService {
         System.out.println("Order saved to DB: " + savedOrder);
 
         return savedOrder;
+    }
+
+    public List<Order> findOrdersByPartyId(Long partyId) {
+        return orderRepository.findByPartyId(partyId);
     }
 
 

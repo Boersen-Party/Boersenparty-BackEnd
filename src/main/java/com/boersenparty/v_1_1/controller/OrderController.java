@@ -24,14 +24,23 @@ public class OrderController implements OrderControllerInterface {
 
 
 
+
+
     @Override
-    public List<Order>[] getOrders(Long party_id, Long guest_id){
-        return null;
+    public List<Order> getOrders(Long party_id) {
+        return orderService.findOrdersByPartyId(party_id);
     }
 
 
 
     @Override
+    public List<Order> getUsersOrders(String uuid) {
+        return orderService.getOrdersByPartyGuestUuid(uuid);}
+
+
+
+
+        @Override
     public void deleteOrder(Long party_id, Long guest_id, Long order_id){
         orderService.deleteOrder(party_id, guest_id, order_id);
     }

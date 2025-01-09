@@ -42,13 +42,14 @@ public class SecurityConfiguration {
         http.cors(Customizer.withDefaults());
 
         http.authorizeHttpRequests((authorize) -> authorize
-                        .requestMatchers(HttpMethod.POST, "/parties/rooms").permitAll() // Allow POST requests to /parties/rooms
-                        .requestMatchers("/price-update/**").permitAll() // worker Endpoint
-                        .requestMatchers("/parties/**").permitAll() // Exclude /parties/** from authentication
+                        .requestMatchers(HttpMethod.POST, "/parties/guests/orders").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/parties/rooms").permitAll()
+                        .requestMatchers("/price-update/**").permitAll()
+                        .requestMatchers("/parties/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() //kann möglicherweise weg
-                        //.anyRequest().authenticated()
-                )
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                //.anyRequest().authenticated()
+        )
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(JwtDecoders.fromIssuerLocation(issuerUri))
                         .jwtAuthenticationConverter(customJwtAuthencationConverter()))
@@ -65,6 +66,7 @@ public class SecurityConfiguration {
     protected CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfig = new CorsConfiguration();
+        corsConfig.setAllowedOrigins(List.of("https://dev.stock-party.live"));
         corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("*"));
