@@ -2,6 +2,7 @@ package com.boersenparty.v_1_1.interfaces;
 
 import com.boersenparty.v_1_1.dto.OrderDTO;
 import com.boersenparty.v_1_1.models.Order;
+import com.boersenparty.v_1_1.models.Party;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,8 +11,14 @@ import java.util.List;
 
 @RequestMapping(path="/parties")
 public interface OrderControllerInterface {
-    @GetMapping(path="/{party_id}/guests/{guest_id}/orders")
-    public List<Order>[] getOrders(@PathVariable Long party_id, @PathVariable Long guest_id);
+    @GetMapping(path="/{party_id}/guests/orders") //for veranstalter
+    public List<Order> getOrders(@PathVariable Long party_id);
+
+
+    @GetMapping(path="/guests/orders")
+    public List<Order> getUsersOrders(@RequestParam String uuid);
+
+
 
     @DeleteMapping(path="/{party_id}/guests/{guest_id}/orders/{order_id}")
     public void deleteOrder(@PathVariable Long party_id,
