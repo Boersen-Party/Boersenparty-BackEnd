@@ -63,9 +63,9 @@ public class OrderService {
     public Order createReservation(Long partyId, OrderDTO orderDTO) {
         // 1. Get PartyGuest from UUID
         //System.out.println("INCOMING ORDERDTO:" + orderDTO);
-        Optional<PartyGuest> partyGuestOptional = partyGuestRepository.findByUuid(UUID.fromString(orderDTO.getUuid()));
+        Optional<PartyGuest> partyGuestOptional = partyGuestRepository.findByUuid(UUID.fromString(orderDTO.getBelongs_to()));
         if (!partyGuestOptional.isPresent()) {
-            throw new RuntimeException("PartyGuest not found for UUID: " + orderDTO.getUuid());
+            throw new RuntimeException("PartyGuest not found for UUID: " + orderDTO.getBelongs_to());
         }
         PartyGuest partyGuest = partyGuestOptional.get();
         //System.out.println("PartyGuest found: " + partyGuest);
@@ -75,6 +75,7 @@ public class OrderService {
         order.setPartyGuest(partyGuest);
         order.setParty(partyGuest.getParty());  // Assuming PartyGuest has a reference to Party
         order.setIs_paid(orderDTO.isPaid());
+        order.setBelongsTo(orderDTO.getBelongs_to());
         //System.out.println("Order created: " + order);
 
         // 3. Set OrderItems based on OrderDTO items

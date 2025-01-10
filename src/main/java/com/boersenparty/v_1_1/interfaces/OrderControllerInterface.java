@@ -11,12 +11,12 @@ import java.util.List;
 
 @RequestMapping(path="/parties")
 public interface OrderControllerInterface {
-    @GetMapping(path="/{party_id}/guests/orders") //for veranstalter
-    public List<Order> getOrders(@PathVariable Long party_id);
+    @GetMapping(path="/{party_id}/guests/orders") //for personaler
+    public List<OrderDTO> getOrders(@PathVariable Long party_id);
 
 
     @GetMapping(path="/guests/orders")
-    public List<Order> getUsersOrders(@RequestParam String uuid);
+    public List<OrderDTO> getUsersOrders(@RequestParam String uuid);
 
 
 
@@ -26,7 +26,7 @@ public interface OrderControllerInterface {
                             @PathVariable Long order_id);
 
     @PostMapping(path="/{party_id}/guests/orders")
-    public ResponseEntity<Order> createReservation(@PathVariable Long party_id, @RequestBody OrderDTO reservationDTO);
+    public ResponseEntity<OrderDTO> createReservation(@PathVariable Long party_id, @RequestBody OrderDTO reservationDTO);
 
 
 

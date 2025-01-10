@@ -2,6 +2,7 @@ package com.boersenparty.v_1_1.controller;
 
 import com.boersenparty.v_1_1.dto.OrderDTO;
 import com.boersenparty.v_1_1.interfaces.OrderControllerInterface;
+import com.boersenparty.v_1_1.mapper.OrderDTOMapper;
 import com.boersenparty.v_1_1.models.Order;
 import com.boersenparty.v_1_1.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +17,13 @@ public class OrderController implements OrderControllerInterface {
 
     @Autowired
     private final OrderService orderService;
+    private final OrderDTOMapper orderMapper;
 
-    public OrderController(OrderService orderService) {
+
+    public OrderController(OrderService orderService, OrderDTOMapper orderMapper) {
+
         this.orderService = orderService;
+        this.orderMapper = orderMapper;
     }
 
 
@@ -27,16 +32,18 @@ public class OrderController implements OrderControllerInterface {
 
 
     @Override
-    public List<Order> getOrders(Long party_id) {
-        return orderService.findOrdersByPartyId(party_id);
+    public List<OrderDTO> getOrders(Long party_id) {
+        List<Order> orders = orderService.findOrdersByPartyId(party_id);
+        return orderMapper.mapToOrderDTOList(orders);
+
     }
 
-
-
     @Override
-    public List<Order> getUsersOrders(String uuid) {
-        return orderService.getOrdersByPartyGuestUuid(uuid);}
+    public List<OrderDTO> getUsersOrders( String uuid) {
+        List<Order> orders = orderService.getOrdersByPartyGuestUuid(uuid); // Replace with actual service call
+        return orderMapper.mapToOrderDTOList(orders);
 
+    }
 
 
 
@@ -46,11 +53,12 @@ public class OrderController implements OrderControllerInterface {
     }
 
     @Override
-    public ResponseEntity<Order> createReservation( Long party_id, OrderDTO orderDTO) {
+    public ResponseEntity<OrderDTO> createReservation( Long party_id, OrderDTO orderDTO) {
         System.out.println("INCOMING ORDER DTO:" + orderDTO);
         try {
             Order createdOrder = orderService.createReservation(party_id, orderDTO);
-            return ResponseEntity.ok(createdOrder);
+            OrderDTO createdOrderDTO = orderMapper.mapToOrderDTO(createdOrder);
+            return ResponseEntity.ok(createdOrderDTO);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

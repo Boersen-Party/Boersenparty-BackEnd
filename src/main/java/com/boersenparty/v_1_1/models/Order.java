@@ -2,6 +2,7 @@ package com.boersenparty.v_1_1.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ public class Order {
         this.party = party;
     }
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "party_id", nullable = false)
     private Party party;
@@ -50,6 +52,20 @@ public class Order {
     @CreationTimestamp
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm:ss")
     private LocalDateTime expires_at;
+    private String belongs_to;
+
+
+    private double totalPrice; // Total price of the order
+
+
+
+    public String getBelongsTo() {
+        return belongs_to;
+    }
+
+    public void setBelongsTo(String belongsTo) {
+        this.belongs_to = belongsTo;
+    }
 
     public Order() {
     }
@@ -71,7 +87,15 @@ public class Order {
         this.orderItems = orderItems;
     }
 
-    public boolean isIs_paid() {
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public boolean getIs_paid() {
         return is_paid;
     }
 

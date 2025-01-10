@@ -4,18 +4,20 @@ package com.boersenparty.v_1_1.dto;
 import java.util.List;
 
 public class OrderDTO {
-    private String uuid; // PartyGuest UUID
+    private String belongs_to; // PartyGuest UUID
     private List<OrderItemDTO> items; // List of OrderItems
     private double totalPrice; // Total price of the order
     private boolean isPaid; // Payment status
 
     // Getters and Setters
-    public String getUuid() {
-        return uuid;
+
+
+    public String getBelongs_to() {
+        return belongs_to;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setBelongs_to(String belongs_to) {
+        this.belongs_to = belongs_to;
     }
 
     public  List<OrderItemDTO> getItems() {
@@ -45,7 +47,7 @@ public class OrderDTO {
     @Override
     public String toString() {
         return "OrderDTO{" +
-                "uuid='" + uuid + '\'' +
+                "belongs_to='" + belongs_to + '\'' +
                 ", items=" + items +
                 ", totalPrice=" + totalPrice +
                 ", isPaid=" + isPaid +

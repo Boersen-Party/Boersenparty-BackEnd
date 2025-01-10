@@ -124,6 +124,7 @@ public class PartyService {
     }
 
 
+    //des macht probelememememem
     public List<Party> getAccessibleParties() {
         String userId = getUserID(); // Retrieve the user ID from the token
         System.out.println("keycloak userid is:" + userId);
