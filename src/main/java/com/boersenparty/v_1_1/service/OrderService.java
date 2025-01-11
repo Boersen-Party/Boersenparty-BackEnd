@@ -9,6 +9,7 @@ import com.boersenparty.v_1_1.repository.PartyRepository;
 import com.boersenparty.v_1_1.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -74,6 +75,8 @@ public class OrderService {
         order.setParty(partyGuest.getParty());  // Assuming PartyGuest has a reference to Party
         order.setIs_paid(orderDTO.isPaid());
         order.setBelongsTo(orderDTO.getBelongs_to());
+        order.setExpires_at(LocalDateTime.now().plusMinutes(6));
+
 
         // 3. Set OrderItems based on OrderDTO items and calculate total price
         List<OrderItem> orderItems = new ArrayList<>();
