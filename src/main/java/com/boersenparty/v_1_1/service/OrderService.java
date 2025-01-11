@@ -62,13 +62,11 @@ public class OrderService {
     //this doesn't use the partyId
     public Order createReservation(Long partyId, OrderDTO orderDTO) {
         // 1. Get PartyGuest from UUID
-        //System.out.println("INCOMING ORDERDTO:" + orderDTO);
         Optional<PartyGuest> partyGuestOptional = partyGuestRepository.findByUuid(UUID.fromString(orderDTO.getBelongs_to()));
         if (!partyGuestOptional.isPresent()) {
             throw new RuntimeException("PartyGuest not found for UUID: " + orderDTO.getBelongs_to());
         }
         PartyGuest partyGuest = partyGuestOptional.get();
-        //System.out.println("PartyGuest found: " + partyGuest);
 
         // 2. Create Order and set PartyGuest and Party
         Order order = new Order();
@@ -76,10 +74,11 @@ public class OrderService {
         order.setParty(partyGuest.getParty());  // Assuming PartyGuest has a reference to Party
         order.setIs_paid(orderDTO.isPaid());
         order.setBelongsTo(orderDTO.getBelongs_to());
-        //System.out.println("Order created: " + order);
 
-        // 3. Set OrderItems based on OrderDTO items
+        // 3. Set OrderItems based on OrderDTO items and calculate total price
         List<OrderItem> orderItems = new ArrayList<>();
+        double totalPrice = 0;  // Initialize total price
+
         for (OrderItemDTO itemDTO : orderDTO.getItems()) {
             Optional<Product> productOptional = productRepository.findById(itemDTO.getProductId());
             if (productOptional.isPresent()) {
@@ -89,20 +88,29 @@ public class OrderService {
                 orderItem.setProduct(product);
                 orderItem.setQuantity(itemDTO.getQuantity());
                 orderItem.setPricePerItem(itemDTO.getPricePerItem());
+
+                // Calculate total price for the item
+                orderItem.setTotalItemPrice(itemDTO.getTotalItemPrice());
+
                 orderItem.setOrder(order);  // Set the order for this item
+                totalPrice += orderItem.getTotalItemPrice();  // Add to total order price
 
                 orderItems.add(orderItem);
+                System.out.println("added item is + " + orderItem);
             }
         }
-        System.out.println("OrderItems added: " + orderItems);
 
-        // 4. Set the OrderItems and Save Order
+
+
+        // 4. Set the OrderItems, Total Price, and Save Order
         order.setOrderItems(orderItems);
+        order.setTotalPrice(totalPrice);  // Set the total price in the order
         Order savedOrder = orderRepository.save(order);
-        System.out.println("Order saved to DB: " + savedOrder);
+        System.out.println("the saved order is: "+ savedOrder);
 
         return savedOrder;
     }
+
 
     public List<Order> findOrdersByPartyId(Long partyId) {
         return orderRepository.findByPartyId(partyId);

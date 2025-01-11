@@ -21,6 +21,16 @@ public class OrderItem {
     // TODO: priceSum abfrage Funktion
     private Double pricePerItem;
 
+    private Double totalItemPrice;
+
+    public Double getTotalItemPrice() {
+        return totalItemPrice;
+    }
+
+    public void setTotalItemPrice(Double totalItemPrice) {
+        this.totalItemPrice = totalItemPrice;
+    }
+
     public OrderItem() {
     }
 
@@ -73,9 +83,11 @@ public class OrderItem {
     public String toString() {
         return "OrderItem{" +
                 "id=" + id +
+                ", order=" + "wont show this hehe" +
                 ", product=" + product +
                 ", quantity=" + quantity +
                 ", pricePerItem=" + pricePerItem +
+                ", totalItemPrice=" + totalItemPrice +
                 '}';
     }
 }

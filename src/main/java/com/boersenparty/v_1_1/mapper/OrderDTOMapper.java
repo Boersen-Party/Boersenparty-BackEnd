@@ -22,17 +22,18 @@ public class OrderDTOMapper {
             return dto;
         }
 
-        public OrderItemDTO mapToOrderItemDTO(OrderItem item) {
-            OrderItemDTO dto = new OrderItemDTO();
-            dto.setProductId(item.getId());
-            dto.setProductName(item.getProduct().getName());
-            dto.setPricePerItem(item.getPricePerItem());
-            dto.setQuantity(item.getQuantity());
-            dto.setTotalItemPrice(item.getPricePerItem());
-            return dto;
-        }
+    public OrderItemDTO mapToOrderItemDTO(OrderItem item) {
+        OrderItemDTO dto = new OrderItemDTO();
+        dto.setProductId(item.getProduct().getId()); // Use product ID, not order item ID
+        dto.setProductName(item.getProduct().getName());
+        dto.setPricePerItem(item.getPricePerItem());
+        dto.setQuantity(item.getQuantity());
+        dto.setTotalItemPrice(item.getTotalItemPrice()); // Correct field mapping
+        return dto;
+    }
 
-        public List<OrderDTO> mapToOrderDTOList(List<Order> orders) {
+
+    public List<OrderDTO> mapToOrderDTOList(List<Order> orders) {
             return orders.stream().map(this::mapToOrderDTO).collect(Collectors.toList());
         }
     }
