@@ -18,7 +18,7 @@ public interface OrderRepository extends JpaRepository <Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.partyGuest.uuid = :uuid")
     List<Order> findByPartyGuestUuid(@Param("uuid") UUID uuid);
-    @Query("SELECT o FROM Order o WHERE o.expires_at < :expiresAt")
+    @Query("SELECT o FROM Order o JOIN FETCH o.partyGuest WHERE o.expires_at < :expiresAt")
     List<Order> findByExpiresAtBefore(@Param("expiresAt") LocalDateTime expiresAt);
 
 

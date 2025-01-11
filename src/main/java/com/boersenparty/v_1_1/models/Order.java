@@ -49,7 +49,7 @@ public class Order {
 
     private boolean is_paid = false;
 
-    @CreationTimestamp
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yy HH:mm:ss")
     private LocalDateTime expires_at;
     private String belongs_to;
@@ -115,9 +115,9 @@ public class Order {
     public String toString() {
         return "Order{" +
                 "id=" + id +
-                ", partyGuest=" + partyGuest +
-                ", party=" + party +
-                ", orderItems=" + orderItems +
+                ", partyGuest=" + "not showing" +
+                ", party=" + "not showing" +
+                ", orderItems=" + "orderItems goes here" +
                 ", is_paid=" + is_paid +
                 ", expires_at=" + expires_at +
                 '}';

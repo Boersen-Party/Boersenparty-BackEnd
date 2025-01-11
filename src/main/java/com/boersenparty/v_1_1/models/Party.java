@@ -79,8 +79,8 @@ public class Party {
                 ", start_date=" + start_date +
                 ", end_date=" + end_date +
                 ", partyGuests=" + "coming soon" +
-                ", products=" + products +
-                ", events=" + events +
+                ", products=" + "not showing" +
+                ", events=" + "not showing" +
                 '}';
     }
 
