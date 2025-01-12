@@ -1,5 +1,6 @@
 package com.boersenparty.v_1_1.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name="tParties")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,8 +36,7 @@ public class Party {
 
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Event> events;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_stats_id")
+    @OneToOne(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private PartyStats partyStats;
 
     public PartyStats getPartyStats() {

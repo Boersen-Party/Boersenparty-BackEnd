@@ -149,6 +149,8 @@ public class PartyService {
     }
 
 
-
+    public Optional<Party> findById(Long partyId) {
+        return partyRepository.findById(partyId);
+    }
 }
 

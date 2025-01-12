@@ -9,7 +9,8 @@ public class PartyStats {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(mappedBy = "partyStats", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "party_id", nullable = false)
     private Party party;
 
     private double revenue;
