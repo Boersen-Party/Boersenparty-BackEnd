@@ -15,6 +15,8 @@ public class OrderDTOMapper {
         public OrderDTO mapToOrderDTO(Order order) {
             OrderDTO dto = new OrderDTO();
             //dto.setUuid(order.getUuid());
+            dto.setId(order.getId()); // Assuming `getUuid()` is the method for the ID in the `Order` entity
+
             dto.setBelongs_to(order.getBelongsTo());
             dto.setItems(order.getOrderItems().stream().map(this::mapToOrderItemDTO).collect(Collectors.toList()));
             dto.setTotalPrice(order.getTotalPrice());

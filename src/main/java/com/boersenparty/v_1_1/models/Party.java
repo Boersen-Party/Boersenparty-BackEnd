@@ -34,8 +34,17 @@ public class Party {
 
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Event> events;
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "party_stats_id")
+    private PartyStats partyStats;
 
+    public PartyStats getPartyStats() {
+        return partyStats;
+    }
 
+    public void setPartyStats(PartyStats partyStats) {
+        this.partyStats = partyStats;
+    }
 
     public Party(){}
 

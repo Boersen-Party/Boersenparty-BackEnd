@@ -39,4 +39,7 @@ public interface OrderControllerInterface {
             @PathVariable Long guest_id,
             @PathVariable Long order_id);
 
+    @PostMapping("/{party_id}/guests/orders/{order_id}")
+    public ResponseEntity<Order> processOrderPayment(@PathVariable Long party_id, @PathVariable Long order_id);
+
 }

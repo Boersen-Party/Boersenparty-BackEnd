@@ -20,16 +20,9 @@ public class OrderCleanupService {
     public void deleteExpiredOrders() {
         LocalDateTime now = LocalDateTime.now();
         List<Order> expiredOrders = orderRepository.findByExpiresAtBefore(now);
-        System.out.println("expired Orders:" + expiredOrders);
-
-        System.out.println("Current time: " + now);
-        for (Order order : expiredOrders) {
-            System.out.println("Order ID: " + order.getId() + ", Expires At: " + order.getExpires_at());
-        }
 
         if (!expiredOrders.isEmpty()) {
             orderRepository.deleteAll(expiredOrders);
-            System.out.println("Deleted expired orders: " + expiredOrders.size());
         }
     }
 }

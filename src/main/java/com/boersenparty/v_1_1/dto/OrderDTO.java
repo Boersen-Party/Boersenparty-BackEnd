@@ -4,6 +4,7 @@ package com.boersenparty.v_1_1.dto;
 import java.util.List;
 
 public class OrderDTO {
+    private Long id;
     private String belongs_to; // PartyGuest UUID
     private List<OrderItemDTO> items; // List of OrderItems
     private double totalPrice; // Total price of the order
@@ -11,6 +12,14 @@ public class OrderDTO {
 
     // Getters and Setters
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getBelongs_to() {
         return belongs_to;

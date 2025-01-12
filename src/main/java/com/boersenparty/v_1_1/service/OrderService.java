@@ -3,10 +3,7 @@ package com.boersenparty.v_1_1.service;
 import com.boersenparty.v_1_1.dto.OrderDTO;
 import com.boersenparty.v_1_1.dto.OrderItemDTO;
 import com.boersenparty.v_1_1.models.*;
-import com.boersenparty.v_1_1.repository.OrderRepository;
-import com.boersenparty.v_1_1.repository.PartyGuestRepository;
-import com.boersenparty.v_1_1.repository.PartyRepository;
-import com.boersenparty.v_1_1.repository.ProductRepository;
+import com.boersenparty.v_1_1.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,15 +21,17 @@ public class OrderService {
 
 
     private final PartyGuestService partyGuestService;
+    private final PartyStatsRepository partyStatsRepository;
 
     public OrderService(OrderRepository orderRepository, PartyGuestRepository partyGuestRepository,
                         PartyRepository partyRepository, PartyGuestService partyGuestService,
-                         ProductRepository productRepository) {
+                         ProductRepository productRepository, PartyStatsRepository partyStatsRepository) {
         this.orderRepository = orderRepository;
         this.partyGuestRepository = partyGuestRepository;
         this.partyRepository = partyRepository;
         this.partyGuestService = partyGuestService;
         this.productRepository = productRepository;
+        this.partyStatsRepository = partyStatsRepository;
 
 
     }
@@ -120,22 +119,95 @@ public class OrderService {
     }
 
 
+
+    public Order processOrderPayment(Long partyId, Long orderId) {
+        System.out.println("Starting processOrderPayment for Party ID: " + partyId + ", Order ID: " + orderId);
+
+        // Retrieve the order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> {
+                    System.out.println("Order not found with ID: " + orderId);
+                    return new RuntimeException("Order not found with ID: " + orderId);
+                });
+        System.out.println("Retrieved Order: " + order);
+
+        // Validate that the order belongs to the specified party
+        if (!order.getParty().getId().equals(partyId)) {
+            System.out.println("Order does not belong to the specified party with ID: " + partyId);
+            throw new RuntimeException("Order does not belong to the specified party with ID: " + partyId);
+        }
+        System.out.println("Order is valid for the specified party.");
+
+        if (order.getIs_paid()) {  // Adjusted naming convention for 'isPaid'
+            System.out.println("Order is already marked as paid.");
+            throw new RuntimeException("Order is already marked as paid.");
+        }
+
+        // Mark the order as paid
+        order.setIs_paid(true);
+        System.out.println("Order marked as paid.");
+
+        // Update PartyStats (assumes a PartyStats entity exists and is mapped to a party)
+        Party party = order.getParty();
+        System.out.println("Retrieving PartyStats for Party ID: " + party.getId());
+        PartyStats partyStats = partyStatsRepository.findByParty(party)
+                .orElseGet(() -> {
+                    System.out.println("No existing PartyStats found. Creating new PartyStats for Party ID: " + party.getId());
+                    PartyStats newPartyStats = new PartyStats();
+                    newPartyStats.setParty(party);
+                    return newPartyStats;
+                });
+
+        // Calculate revenue and profit
+        double orderRevenue = order.getTotalPrice();
+        double orderProfit = 0;
+        System.out.println("Order revenue: " + orderRevenue);
+
+        // Iterate through order items and calculate profits and adjust quantities
+        for (OrderItem orderItem : order.getOrderItems()) {
+            Product product = orderItem.getProduct();
+            System.out.println("Processing OrderItem: " + orderItem.getId() + ", Product ID: " + product.getId());
+
+            // Calculate profit per item
+            double itemProfit = (orderItem.getPricePerItem() - product.getPrice_min()) * orderItem.getQuantity();  // Adjusted naming convention
+            orderProfit += itemProfit;
+            System.out.println("Calculated item profit for Product ID: " + product.getId() + " is: " + itemProfit);
+
+            // Reduce product quantity
+            if (product.getpQuantity() < orderItem.getQuantity()) {  // Adjusted naming convention
+                System.out.println("Insufficient product quantity for product ID: " + product.getId());
+                throw new RuntimeException("Insufficient product quantity for product ID: " + product.getId());
+            }
+            product.setpQuantity(product.getpQuantity() - orderItem.getQuantity());  // Adjusted naming convention
+            System.out.println("Reduced quantity for Product ID: " + product.getId() + " to: " + product.getpQuantity());
+            productRepository.save(product);
+        }
+
+        // Update PartyStats
+        partyStats.setRevenue(partyStats.getRevenue() + orderRevenue);
+        partyStats.setProfit(partyStats.getProfit() + orderProfit);
+        partyStats.setTotalOrders(partyStats.getTotalOrders() + 1);
+        System.out.println("Updated PartyStats for Party ID: " + party.getId() + ". New revenue: " + partyStats.getRevenue() + ", New profit: " + partyStats.getProfit() + ", Total orders: " + partyStats.getTotalOrders());
+
+        partyStatsRepository.save(partyStats);
+        System.out.println("Saved updated PartyStats.");
+
+        // Save the updated order
+        Order updatedOrder = orderRepository.save(order);
+        System.out.println("Saved updated Order with ID: " + updatedOrder.getId());
+
+        return updatedOrder;
+    }
+
+
+
+
 }
 
 
 
 
 
- /*
-    public Order realizeOrder(Long guestId) {
-
-        PartyGuest partyGuest = partyGuestRepository.findById(guestId)
-                .orElseThrow(() -> new EntityNotFoundException("Invalid PartyGuest"));
-
-        Order order = new Order(partyGuest, partyGuest.getParty());
-        return orderRepository.save(order);
-
-         */
 
 
 

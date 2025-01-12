@@ -71,5 +71,11 @@ public class OrderController implements OrderControllerInterface {
         return null;
     }
 
+    @Override
+    public ResponseEntity<Order> processOrderPayment(@PathVariable Long party_id, @PathVariable Long order_id) {
+        Order paidOrder = orderService.processOrderPayment(party_id, order_id);
+        return ResponseEntity.ok(paidOrder);
+    }
+
 
 }
