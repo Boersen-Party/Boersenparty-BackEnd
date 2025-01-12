@@ -62,26 +62,45 @@ public class OrderService {
     //this doesn't use the partyId
     public Order createReservation(Long partyId, OrderDTO orderDTO) {
         // 1. Get PartyGuest from UUID
+        System.out.println("Looking up PartyGuest with UUID: " + orderDTO.getBelongs_to());
         Optional<PartyGuest> partyGuestOptional = partyGuestRepository.findByUuid(UUID.fromString(orderDTO.getBelongs_to()));
         if (!partyGuestOptional.isPresent()) {
+            System.out.println("PartyGuest not found for UUID: " + orderDTO.getBelongs_to());
             throw new RuntimeException("PartyGuest not found for UUID: " + orderDTO.getBelongs_to());
         }
         PartyGuest partyGuest = partyGuestOptional.get();
+        System.out.println("Found PartyGuest: " + partyGuest);
 
-        // 2. Create Order and set PartyGuest and Party
+        // 2. Check for existing pending order for the user
+        System.out.println("Checking for existing pending order for PartyGuest with UUID: " + orderDTO.getBelongs_to());
+        Order existingOrder = orderRepository.findFirstByPartyGuestAndIsPaidFalseAndExpiresAtBefore(partyGuest, LocalDateTime.now());
+
+        if (existingOrder != null) {
+            // 3. If a pending order exists, delete it
+            System.out.println("Found existing pending order: " + existingOrder);
+            System.out.println("Deleting pending order: " + existingOrder);
+            orderRepository.delete(existingOrder);  // Delete the old pending order
+        } else {
+            System.out.println("No existing pending order found for PartyGuest with UUID: " + orderDTO.getBelongs_to());
+        }
+
+        // 4. Create new order and set PartyGuest and Party
         Order order = new Order();
         order.setPartyGuest(partyGuest);
         order.setParty(partyGuest.getParty());  // Assuming PartyGuest has a reference to Party
         order.setIs_paid(orderDTO.isPaid());
         order.setBelongsTo(orderDTO.getBelongs_to());
-        order.setExpires_at(LocalDateTime.now().plusMinutes(6));
+        order.setExpires_at(LocalDateTime.now().plusMinutes(6));  // Set expiration to 6 minutes from now
 
+        System.out.println("Creating new order for PartyGuest: " + partyGuest);
+        System.out.println("Order details: " + order);
 
-        // 3. Set OrderItems based on OrderDTO items and calculate total price
+        // 5. Set OrderItems based on OrderDTO items and calculate total price
         List<OrderItem> orderItems = new ArrayList<>();
         double totalPrice = 0;  // Initialize total price
 
         for (OrderItemDTO itemDTO : orderDTO.getItems()) {
+            System.out.println("Processing OrderItem: " + itemDTO);
             Optional<Product> productOptional = productRepository.findById(itemDTO.getProductId());
             if (productOptional.isPresent()) {
                 Product product = productOptional.get();
@@ -98,20 +117,23 @@ public class OrderService {
                 totalPrice += orderItem.getTotalItemPrice();  // Add to total order price
 
                 orderItems.add(orderItem);
-                System.out.println("added item is + " + orderItem);
+                System.out.println("Added item to order: " + orderItem);
+            } else {
+                System.out.println("Product not found for Product ID: " + itemDTO.getProductId());
             }
         }
 
-
-
-        // 4. Set the OrderItems, Total Price, and Save Order
+        // 6. Set the OrderItems, Total Price, and Save Order
         order.setOrderItems(orderItems);
         order.setTotalPrice(totalPrice);  // Set the total price in the order
+        System.out.println("Final total price for order: " + totalPrice);
+
         Order savedOrder = orderRepository.save(order);
-        System.out.println("the saved order is: "+ savedOrder);
+        System.out.println("Saved order: " + savedOrder);
 
         return savedOrder;
     }
+
 
 
     public List<Order> findOrdersByPartyId(Long partyId) {

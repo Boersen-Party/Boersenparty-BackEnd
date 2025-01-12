@@ -1,6 +1,7 @@
 package com.boersenparty.v_1_1.repository;
 
 import com.boersenparty.v_1_1.models.Order;
+import com.boersenparty.v_1_1.models.PartyGuest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,6 +21,10 @@ public interface OrderRepository extends JpaRepository <Order, Long> {
     List<Order> findByPartyGuestUuid(@Param("uuid") UUID uuid);
     @Query("SELECT o FROM Order o JOIN FETCH o.partyGuest WHERE o.expires_at < :expiresAt")
     List<Order> findByExpiresAtBefore(@Param("expiresAt") LocalDateTime expiresAt);
+
+    @Query("SELECT o FROM Order o WHERE o.partyGuest = :partyGuest AND o.is_paid = false AND o.expires_at > :expiresAt")
+    Order findFirstByPartyGuestAndIsPaidFalseAndExpiresAtBefore(@Param("partyGuest") PartyGuest partyGuest, @Param("expiresAt") LocalDateTime expiresAt);
+
 
 
 
