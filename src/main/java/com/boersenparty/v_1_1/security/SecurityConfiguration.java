@@ -42,14 +42,12 @@ public class SecurityConfiguration {
         http.cors(Customizer.withDefaults());
 
         http.authorizeHttpRequests((authorize) -> authorize
-                                .requestMatchers(HttpMethod.POST, "/parties/guests/orders").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/parties/rooms").permitAll()
-                                .requestMatchers("/price-update/**").permitAll()
-                                .requestMatchers("/parties/**").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        //.anyRequest().authenticated()
-                )
+                .requestMatchers(HttpMethod.POST, "/parties/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .anyRequest().permitAll() // Allow all other requests
+        )
+
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt
                         .decoder(JwtDecoders.fromIssuerLocation(issuerUri))
                         .jwtAuthenticationConverter(customJwtAuthencationConverter()))
