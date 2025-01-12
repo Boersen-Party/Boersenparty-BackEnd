@@ -44,8 +44,10 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests((authorize) -> authorize
                 .requestMatchers(HttpMethod.POST, "/parties/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/parties/**").permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/parties/**").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .anyRequest().permitAll() // Allow all other requests
+                .anyRequest().permitAll()
         )
 
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt

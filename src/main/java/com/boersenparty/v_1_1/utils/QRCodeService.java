@@ -24,8 +24,7 @@ public class QRCodeService {
         Map<EncodeHintType, Object> hintMap = new HashMap<>();
         hintMap.put(EncodeHintType.MARGIN, 1);  // margin
 
-        // TODO: change this to point to server
-        BitMatrix bitMatrix = qrCodeWriter.encode("http://localhost:4200/?code=" + accessCode, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE, hintMap);
+        BitMatrix bitMatrix = qrCodeWriter.encode("https://dev.stock-party.live/parties/?code=" + accessCode, BarcodeFormat.QR_CODE, QR_CODE_SIZE, QR_CODE_SIZE, hintMap);
 
         BufferedImage image = toBufferedImage(bitMatrix);
 
