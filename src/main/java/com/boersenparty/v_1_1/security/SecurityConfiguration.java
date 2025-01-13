@@ -66,7 +66,7 @@ public class SecurityConfiguration {
     protected CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedOrigins(List.of("https://dev.stock-party.live", "http://localhost:4200"));
+        corsConfig.setAllowedOrigins(List.of("https://stock-party.live", "https://dev.stock-party.live", "http://localhost:4200"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setAllowCredentials(true);
