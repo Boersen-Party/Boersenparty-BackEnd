@@ -25,8 +25,6 @@ public class QRCodeController {
         this.partyRepository = partyRepository;
     }
 
-    //TODO: adjust the url
-    //@PreAuthorize("hasAuthority('_PERSONAL')")
     @GetMapping("/parties/{partyId}/qrcodes")
     public ResponseEntity<String> getQRCode(@PathVariable Long partyId) {
         Party party = partyRepository.findById(partyId)
@@ -36,13 +34,6 @@ public class QRCodeController {
             byte[] qrCodeBytes = QRCodeService.generateQRCode(party.getAccessCode());
 
             String qrCodeBase64 = Base64.getEncoder().encodeToString(qrCodeBytes);
-            System.out.println("String about to be recieved is: " + qrCodeBase64);
-            System.out.println("String about to be recieved is: " + qrCodeBase64);
-
-            System.out.println("String about to be recieved is: " + qrCodeBase64);
-
-            System.out.println("String about to be recieved is: " + qrCodeBase64);
-
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_TYPE, "text/plain") // Or application/json if returning JSON
