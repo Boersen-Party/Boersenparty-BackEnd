@@ -33,7 +33,6 @@ public class Product {
 
     private String imageURL;
 
-    // TODO: productType table
     private String productType;
 
 

@@ -16,8 +16,6 @@ public interface EventControllerInterface {
     @GetMapping(path="/{party_id}/events")
     public List<EventDTO> getEvents(@PathVariable Long party_id);
 
-    //@GetMapping(path="/{party_id}/events/{event_id}")
-    //public Optional<Party> getEvent(@PathVariable Long party_id, @PathVariable Long event_id);
 
 
     //DELETE ALL EVENTS

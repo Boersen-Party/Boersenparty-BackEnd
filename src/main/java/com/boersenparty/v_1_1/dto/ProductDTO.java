@@ -13,7 +13,6 @@ public class ProductDTO {
     private boolean is_active;
     private String imageURL;
     private String productType;
-
     private Double latestCalculatedPrice;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")

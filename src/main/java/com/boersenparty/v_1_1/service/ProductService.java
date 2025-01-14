@@ -81,7 +81,6 @@ public class ProductService {
 
         Product savedProduct = productRepository.save(product);
 
-        //maybe other way around
         CalculatedPrice initialCalculatedPrice = new CalculatedPrice();
         initialCalculatedPrice.setPrice(productDTO.getLatestCalculatedPrice());
         initialCalculatedPrice.setProduct(product);

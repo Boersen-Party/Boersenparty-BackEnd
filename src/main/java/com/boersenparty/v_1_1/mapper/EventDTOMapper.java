@@ -19,7 +19,6 @@ public class EventDTOMapper {
         return eventDTO;
     }
 
-    // Convert EventDTO to Event entity
     public static Event toEntity(EventDTO eventDTO) {
         if (eventDTO == null) {
             return null;

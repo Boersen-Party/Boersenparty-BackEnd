@@ -29,16 +29,6 @@ public interface OrderControllerInterface {
     public ResponseEntity<OrderDTO> createReservation(@PathVariable Long party_id, @RequestBody OrderDTO reservationDTO);
 
 
-
-
-
-    @PutMapping(path="/{party_id}/guests/{guest_id}/orders/{order_id}")
-    public ResponseEntity<Order> updateOrder(
-            @RequestBody(required = true) Order order,
-            @PathVariable Long party_id,
-            @PathVariable Long guest_id,
-            @PathVariable Long order_id);
-
     @PostMapping("/{party_id}/guests/orders/{order_id}")
     public ResponseEntity<Order> processOrderPayment(@PathVariable Long party_id, @PathVariable Long order_id);
 

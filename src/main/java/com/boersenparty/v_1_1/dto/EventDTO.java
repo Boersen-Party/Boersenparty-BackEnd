@@ -3,7 +3,7 @@ package com.boersenparty.v_1_1.dto;
 
 public class EventDTO {
     private Long id;
-    private String type;  // Event type (Happy Hour, etc.)
+    private String type;  // Event type can only be 'Happy Hour' or 'Boersencrash'
     private Integer duration;  // Duration in minutes
 
     public EventDTO() {}

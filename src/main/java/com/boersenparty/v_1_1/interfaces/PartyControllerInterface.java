@@ -16,7 +16,6 @@ public interface PartyControllerInterface {
 
     @GetMapping
     public List<Party> getParties();
-
     @GetMapping(path="/{party_id}")
     public Optional <Party> getParty(@PathVariable Long party_id);
 
@@ -25,7 +24,6 @@ public interface PartyControllerInterface {
 
     @PostMapping
     public ResponseEntity<Party> createParty(@RequestBody(required = true) Party party);
-
     @PostMapping(path="/rooms")
     public ResponseEntity<JoinPartyResponse> joinParty(@RequestBody(required = true) JoinPartyRequest request);
 

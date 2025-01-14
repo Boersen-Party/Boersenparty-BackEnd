@@ -5,12 +5,10 @@ import java.util.List;
 
 public class OrderDTO {
     private Long id;
-    private String belongs_to; // PartyGuest UUID
-    private List<OrderItemDTO> items; // List of OrderItems
-    private double totalPrice; // Total price of the order
-    private boolean isPaid; // Payment status
-
-    // Getters and Setters
+    private String belongs_to;
+    private List<OrderItemDTO> items;
+    private double totalPrice;
+    private boolean isPaid;
 
 
     public Long getId() {

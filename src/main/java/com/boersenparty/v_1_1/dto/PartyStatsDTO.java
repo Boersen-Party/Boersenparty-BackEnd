@@ -5,7 +5,6 @@ public class PartyStatsDTO {
     private double profit;
     private int totalOrders;
 
-    // Getters and setters
     public Long getPartyId() {
         return partyId;
     }

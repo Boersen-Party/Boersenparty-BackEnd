@@ -20,7 +20,6 @@ import java.util.UUID;
 
 import static com.boersenparty.v_1_1.utils.TokenUtils.*;
 
-// TODO: "n_guests" als Abfrage funktion in PartyService
 
 @Service
 public class PartyService {
@@ -124,16 +123,13 @@ public class PartyService {
     }
 
 
-    //des macht probelememememem
     public List<Party> getAccessibleParties() {
         String userId = getUserID(); // Retrieve the user ID from the token
         System.out.println("keycloak userid is:" + userId);
 
         if (hasAuthority("_VERANSTALTER")) {
-            System.out.println("Authority: _VERANSTALTER!!!!!!!!!!");
             return getPartiesHostedBy(userId);
         } else if (hasAuthority("_PERSONAL")) {
-            System.out.println("Authority: _PERSONAL!!!!!!!!!!");
 
             String veranstalterId = getWorksForFromToken(); // Retrieve the associated Veranstalter ID
             System.out.println("works for is:" + veranstalterId);

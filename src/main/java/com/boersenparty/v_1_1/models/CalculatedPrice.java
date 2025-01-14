@@ -18,7 +18,7 @@ public class CalculatedPrice {
     private LocalDateTime time;
 
     @ManyToOne()
-    @JoinColumn(name = "product_id", nullable = false) // Foreign key to Product
+    @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
     private double price;
@@ -60,7 +60,7 @@ public class CalculatedPrice {
         System.out.println("CalculatedPrice constructor called!");
         this.product = product;
         this.price = price_base;
-        this.time = LocalDateTime.now();  // Store the current time
+        this.time = LocalDateTime.now();
     }
 
     @Override

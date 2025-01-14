@@ -23,10 +23,9 @@ public class ProductDTOMapper {
         productDTO.setpQuantity(product.getpQuantity());
 
         if (product.getCalculatedPrices() != null && !product.getCalculatedPrices().isEmpty()) {
-            // Set the latest price and price update timestamp
             CalculatedPrice latestPrice = product.getCalculatedPrices().get(product.getCalculatedPrices().size() - 1);
             productDTO.setLatestCalculatedPrice(latestPrice.getPrice());
-            productDTO.setPriceUpdatedAt(latestPrice.getTime());  // Assuming CalculatedPrice has a timestamp field
+            productDTO.setPriceUpdatedAt(latestPrice.getTime());
         }
 
         productDTO.setPrice_min(product.getPrice_min());
@@ -49,9 +48,8 @@ public class ProductDTOMapper {
 
         if (productDTO.getLatestCalculatedPrice() != null) {
             List<CalculatedPrice> calculatedPrices = new ArrayList<>();
-            // Assuming you have the price update timestamp when setting the price
             CalculatedPrice initialPrice = new CalculatedPrice(product, productDTO.getLatestCalculatedPrice());
-            initialPrice.setTime(productDTO.getPriceUpdatedAt()); // Assuming you can set the timestamp in the CalculatedPrice
+            initialPrice.setTime(productDTO.getPriceUpdatedAt());
             calculatedPrices.add(initialPrice);
             product.setCalculatedPrices(calculatedPrices);
         }

@@ -28,9 +28,6 @@ public class OrderController implements OrderControllerInterface {
 
 
 
-
-
-
     @Override
     public List<OrderDTO> getOrders(Long party_id) {
         List<Order> orders = orderService.findOrdersByPartyId(party_id);
@@ -44,7 +41,6 @@ public class OrderController implements OrderControllerInterface {
         return orderMapper.mapToOrderDTOList(orders);
 
     }
-
 
 
         @Override
@@ -64,12 +60,6 @@ public class OrderController implements OrderControllerInterface {
         }
     }
 
-    @Override
-    public ResponseEntity<Order> updateOrder(Order order, Long party_id,
-                                             Long guest_id, Long order_id){
-        System.out.println("updateOrder not yet implemented");
-        return null;
-    }
 
     @Override
     public ResponseEntity<Order> processOrderPayment(@PathVariable Long party_id, @PathVariable Long order_id) {

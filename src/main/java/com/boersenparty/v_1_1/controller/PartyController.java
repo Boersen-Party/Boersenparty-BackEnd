@@ -38,9 +38,8 @@ public class PartyController implements PartyControllerInterface {
 
      */
     @Override
-    //@PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
+    @PreAuthorize("hasAnyAuthority('_VERANSTALTER', '_PERSONAL')")
     public List<Party> getParties() {
-        System.out.println("getParties is called in controller!");
         return partyService.getAccessibleParties();
     }
 
@@ -59,7 +58,7 @@ public class PartyController implements PartyControllerInterface {
 
 
     @Override
-    //@PreAuthorize("hasAuthority('_VERANSTALTER')")
+    @PreAuthorize("hasAuthority('_VERANSTALTER')")
     public ResponseEntity<Party> createParty(Party party) {
         System.out.println("party about to be created is:" + party);
         return ResponseEntity.ok(partyService.createParty(party));
@@ -70,7 +69,6 @@ public class PartyController implements PartyControllerInterface {
         return partyService.updateParty(party, party_id);
     }
 
-    // Join Party by Access Code, here accesCode is still a JSON that needs to be parsed
     @Override
     public ResponseEntity<JoinPartyResponse> joinParty(JoinPartyRequest request) {
         return partyService.joinParty(request.getAccessCode());

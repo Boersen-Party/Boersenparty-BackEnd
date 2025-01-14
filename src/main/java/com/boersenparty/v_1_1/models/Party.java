@@ -14,26 +14,17 @@ public class Party {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
     private String accessCode;
-
-
     private String hostedBy;
-
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime start_date;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm")
     private LocalDateTime end_date;
-
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PartyGuest> partyGuests;
-
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Product> products;
-
     @OneToMany(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
     private List <Event> events;
     @OneToOne(mappedBy = "party", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,35 +39,6 @@ public class Party {
     }
 
     public Party(){}
-
-    /*
-    public Party(List<Product> products){
-        this.products = products;
-        this.accessCode = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
-    }
-
-    */
-
-
-/*
-    public Party(String name, String hosted_by, List<Product> products) {
-        this.products = products;
-        System.out.println("First Party Constructor is called");
-        this.name = name;
-        this.hostedBy = hosted_by;
-        this.start_date = LocalDateTime.now();
-        this.end_date = this.start_date.plusDays(1);
-        this.accessCode = UUID.randomUUID().toString().substring(0, 5).toUpperCase();
-    }
-    public Party(String name, LocalDateTime start_date, LocalDateTime end_date, List<Product> products) {
-        this.products = products;
-        System.out.println("Second Constructor is called");
-        this.name = name;
-        this.start_date = start_date;
-        this.end_date = end_date;
-        this.hostedBy = "Partyveranstalter";
-    }
-    */
 
 
     @Override

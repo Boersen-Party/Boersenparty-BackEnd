@@ -22,7 +22,6 @@ public class OrderItem {
     private Product product;
     private Integer quantity;
 
-    // TODO: priceSum abfrage Funktion
     private Double pricePerItem;
 
     private Double totalItemPrice;
@@ -38,7 +37,6 @@ public class OrderItem {
     public OrderItem() {
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

@@ -17,12 +17,10 @@ public class TokenUtils {
                 return name;
             }
         }
-        // Fallback
         System.out.println("ERROR: claim (PREFFERED USERNAME) unaccesible, returning getName() instead");
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
-    // Check if the current user has a specific authority
     public static boolean hasAuthority(String authority) {
         return SecurityContextHolder.getContext().getAuthentication().getAuthorities().stream()
                 .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(authority));
@@ -37,7 +35,6 @@ public class TokenUtils {
             return jwt.getClaim("works_for");
         }
 
-        // Fallback if the attribute is missing or token is invalid
         return null;
     }
 }

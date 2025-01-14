@@ -52,18 +52,5 @@ public class PartyGuestController implements PartyGuestControllerInterface {
         return partyGuestService.updateGuest(guest, party_id, guest_id);
     }
 
-    /*
 
-
-
-
-    //This is the only place where PartyGuests are created
-    @PutMapping(path="/parties/{party_id}/guests")
-    public void joinParty(@PathVariable Long party_id) {
-        //test later
-        //partyService.joinParty(party_id);
-    }
-
-
-     */
 }

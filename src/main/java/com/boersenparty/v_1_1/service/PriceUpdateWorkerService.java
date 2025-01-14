@@ -46,21 +46,16 @@ public class PriceUpdateWorkerService {
 
     // Once a product is created, this worker starts
     public void startPriceUpdateWorker(Long productId) {
-        //sodass der UpdateWorker beendet wird, wenn das bearbeitete Produkt gelöscht wird
+        //dient dazu, dass der UpdateWorker beendet wird, wenn das bearbeitete Produkt gelöscht wird
         ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {
             try {
                 Product product = productRepository.findById(productId)
                         .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + productId));
-
                 double newPrice = calculatePriceBasedOnCurrent(product);
-
                 CalculatedPrice updatedCalculatedPrice = new CalculatedPrice(product, newPrice);
-                System.out.println("Updated Calculated Price: " + updatedCalculatedPrice);
-
                 calculatedPriceRepository.save(updatedCalculatedPrice);
-
                 //  webhook
-                triggerPriceUpdateWebhook(updatedCalculatedPrice);
+                triggerPriceUpdateWebhook(updatedCalculatedPrice); //hier wird ein externes System benachrichtigt
             } catch (IllegalArgumentException e) {
                 System.out.println(e.getMessage());
                 stopPriceUpdateWorker(productId); // wenn Produkt gelöscht
@@ -68,7 +63,6 @@ public class PriceUpdateWorkerService {
                 e.printStackTrace();
             }
         }, 1, 10, TimeUnit.SECONDS);
-
         // für das terminieren von Workern
         productTasks.put(productId, future);
     }
@@ -86,42 +80,34 @@ public class PriceUpdateWorkerService {
         if (product == null) {
             throw new IllegalArgumentException("Product cannot be null");
         }
-
-        // latest price
         List<CalculatedPrice> calculatedPrices = calculatedPriceRepository.findByProductId(product.getId());
-
-        double currentPrice = product.getPrice_min(); // Default
+        //holt sich den aktuellsten Preis - wenn nicht vorhanden, nutze price_min
+        double currentPrice = product.getPrice_min();
         if (calculatedPrices != null && !calculatedPrices.isEmpty()) {
             CalculatedPrice latestCalculatedPrice = calculatedPrices.get(calculatedPrices.size() - 1);
             currentPrice = latestCalculatedPrice.getPrice();
         }
-
         double baseStepSize = 0.4;
-        //based on stock
+        //Preis "Schritt" basierend auf Bestand - Knappheit eines Produkts macht die StepSize höher
         if (product.getpQuantity() >= 1 && product.getpQuantity() <= 15) {
             baseStepSize = 1.5;
         } else if (product.getpQuantity() >= 50 && product.getpQuantity() <= 60) {
-            baseStepSize = 0.2;
-        }
-
-        // more randomness
-        double randomStepSize = baseStepSize * (0.5 + Math.random()); // Random multiplier between 0.5 and 1.5
-
-        double randomFactor = Math.random() > 0.5 ? 1 : -1; //  direction
+            baseStepSize = 0.2;}
+        // mehr Zufall in der Preisberechnung
+        double randomStepSize = baseStepSize * (0.5 + Math.random());
+        double randomFactor = Math.random() > 0.5 ? 1 : -1; //  "Richtung"
         double randomMagnitude = randomStepSize * (Math.random() * 2);
         double newPrice = currentPrice + randomFactor * randomMagnitude;
-
-        // Tolerance to avoid getting stuck at price_min or price_max
+        // dient dazu, nicht bei "price_min" fest zu stecken
         double tolerance = 0.01;
-
         if (newPrice <= product.getPrice_min() + tolerance) {
             newPrice = product.getPrice_min() + tolerance;
         } else if (newPrice >= product.getPrice_max() - tolerance) {
             newPrice = product.getPrice_max() - tolerance;
         }
+        return Math.ceil(newPrice * 100) / 100.0;} //aufrunden auf 2. Nach-Kommastellen
 
-        return Math.ceil(newPrice * 100) / 100.0;
-    }
+
 
 
     // Updated price werden hier geschickt
@@ -136,28 +122,23 @@ public class PriceUpdateWorkerService {
 
     public void startTriggeredEventWorker(Event event) {
         System.out.println("Applying triggered event: " + event.getType());
-
         List<Product> products = productRepository.findAllByPartyId(event.getParty().getId());
 
         for (Product product : products) {
-            stopPriceUpdateWorker(product.getId());
-
+            stopPriceUpdateWorker(product.getId()); // stoppt generischen Preis-Worker
             ScheduledFuture<?> future = scheduler.scheduleAtFixedRate(() -> {
                 try {
                     double adjustedPrice = calculatePriceBasedOnCurrent(product);
-
                     if ("Boersencrash".equalsIgnoreCase(event.getType())) {
                         adjustedPrice *= 0.5;
-                    } else if ("Happy Hour".equalsIgnoreCase(event.getType()) && "mit Alkohol".equalsIgnoreCase(product.getProductType())) {
+                    } else if ("Happy Hour".equalsIgnoreCase(event.getType()) &&
+                            "mit Alkohol".equalsIgnoreCase(product.getProductType())) {
                         adjustedPrice *= 0.7;
                     }
-
                     CalculatedPrice calculatedPrice = new CalculatedPrice(product, adjustedPrice);
                     calculatedPriceRepository.save(calculatedPrice);
-
                     // Trigger webhook
                     triggerPriceUpdateWebhook(calculatedPrice);
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -189,7 +170,6 @@ public class PriceUpdateWorkerService {
             List<Product> allProducts = productRepository.findAll();
             allProducts.forEach(product -> startPriceUpdateWorker(product.getId()));
 
-            System.out.println("Normal price updates resumed.");
         }, event.getDuration(), TimeUnit.MINUTES);
     }
 

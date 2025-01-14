@@ -41,7 +41,6 @@ public class PriceUpdateController {
         calculatedPrice.setPrice(priceUpdateEvent.getCalculatedPrice().getPrice());
         calculatedPrice.setTime(priceUpdateEvent.getCalculatedPrice().getTime());
 
-        // Save the CalculatedPrice
         System.out.println("CP DB looks like:" +        calculatedPriceRepository.save(calculatedPrice));
 
 

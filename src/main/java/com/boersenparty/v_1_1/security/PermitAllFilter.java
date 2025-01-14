@@ -15,7 +15,6 @@ public class PermitAllFilter extends OncePerRequestFilter {
     private final RequestMatcher requestMatcher;
 
     public PermitAllFilter(String pattern) {
-        // Allow all HTTP methods and enable case-sensitivity
         this.requestMatcher = new AntPathRequestMatcher(pattern, null, true);
     }
 
@@ -24,10 +23,8 @@ public class PermitAllFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
         if (requestMatcher.matches(request)) {
-            // Allow the request to proceed without additional filtering
             filterChain.doFilter(request, response);
         } else {
-            // Continue with the filter chain for non-matching requests
             filterChain.doFilter(request, response);
         }
     }

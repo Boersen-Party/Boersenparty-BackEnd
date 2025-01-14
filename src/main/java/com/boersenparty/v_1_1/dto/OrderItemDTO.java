@@ -2,13 +2,13 @@ package com.boersenparty.v_1_1.dto;
 
 
 public class OrderItemDTO {
-    private Long productId; // ID of the product
-    private String productName; // Name of the product
-    private Double pricePerItem; // Price per item
-    private Integer quantity; // Quantity of the product
-    private Double totalItemPrice; // Total price for this item (quantity * price)
+    private Long productId;
+    private String productName;
+    private Double pricePerItem;
+    private Integer quantity;
+    private Double totalItemPrice;
 
-    // Getters and Setters
+
     public Long getProductId() {
         return productId;
     }

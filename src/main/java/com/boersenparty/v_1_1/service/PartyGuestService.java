@@ -58,7 +58,6 @@ public class PartyGuestService {
     }
 
     public void deleteGuestFromParty(Long partyId, Long guestId) {
-        //RuntimeException should be ResourceNotFound Exception or sth like that
 
         Optional<Party> optionalParty = partyRepository.findById(partyId);
         if (optionalParty.isEmpty()) {
@@ -110,7 +109,6 @@ public class PartyGuestService {
         );
 
 
-        //doesn't quite work yet
         PartyGuest savedGuest = partyGuestRepository.save(updatedGuest);
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(savedGuest);
     }

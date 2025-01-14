@@ -15,7 +15,7 @@ public class OrderDTOMapper {
         public OrderDTO mapToOrderDTO(Order order) {
             OrderDTO dto = new OrderDTO();
             //dto.setUuid(order.getUuid());
-            dto.setId(order.getId()); // Assuming `getUuid()` is the method for the ID in the `Order` entity
+            dto.setId(order.getId());
 
             dto.setBelongs_to(order.getBelongsTo());
             dto.setItems(order.getOrderItems().stream().map(this::mapToOrderItemDTO).collect(Collectors.toList()));
@@ -26,11 +26,11 @@ public class OrderDTOMapper {
 
     public OrderItemDTO mapToOrderItemDTO(OrderItem item) {
         OrderItemDTO dto = new OrderItemDTO();
-        dto.setProductId(item.getProduct().getId()); // Use product ID, not order item ID
+        dto.setProductId(item.getProduct().getId());
         dto.setProductName(item.getProduct().getName());
         dto.setPricePerItem(item.getPricePerItem());
         dto.setQuantity(item.getQuantity());
-        dto.setTotalItemPrice(item.getTotalItemPrice()); // Correct field mapping
+        dto.setTotalItemPrice(item.getTotalItemPrice());
         return dto;
     }
 
