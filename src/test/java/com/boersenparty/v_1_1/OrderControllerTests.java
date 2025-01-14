@@ -44,7 +44,6 @@ public class OrderControllerTests {
 
     @Test
     void testGetOrders() throws Exception {
-        // Given
         Long partyId = 1L;
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(1L);
@@ -52,7 +51,6 @@ public class OrderControllerTests {
         when(orderService.findOrdersByPartyId(partyId)).thenReturn(Collections.singletonList(new Order()));
         when(orderMapper.mapToOrderDTOList(anyList())).thenReturn(Collections.singletonList(orderDTO));
 
-        // When & Then
         mockMvc.perform(get("/orders/{party_id}", partyId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].belongs_to").value("Test User"));
@@ -62,7 +60,7 @@ public class OrderControllerTests {
 
     @Test
     void testGetUsersOrders() throws Exception {
-        // Given
+
         String uuid = "user-uuid";
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setId(1L);
@@ -70,7 +68,6 @@ public class OrderControllerTests {
         when(orderService.getOrdersByPartyGuestUuid(uuid)).thenReturn(Collections.singletonList(new Order()));
         when(orderMapper.mapToOrderDTOList(anyList())).thenReturn(Collections.singletonList(orderDTO));
 
-        // When & Then
         mockMvc.perform(get("/orders/user/{uuid}", uuid))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].belongs_to").value("User's Test UUID"));
@@ -80,7 +77,6 @@ public class OrderControllerTests {
 
     @Test
     void testCreateReservation() throws Exception {
-        // Given
         Long partyId = 1L;
         OrderDTO orderDTO = new OrderDTO();
         orderDTO.setBelongs_to("user_uuid");
@@ -89,7 +85,6 @@ public class OrderControllerTests {
         when(orderService.createReservation(eq(partyId), any(OrderDTO.class))).thenReturn(order);
         when(orderMapper.mapToOrderDTO(any(Order.class))).thenReturn(orderDTO);
 
-        // When & Then
         mockMvc.perform(post("/orders/{party_id}/reserve", partyId)
                         .contentType("application/json")
                         .content("{\"belongs_to\":\"user_uuid\"}"))
@@ -108,7 +103,6 @@ public class OrderControllerTests {
         order.setId(orderId);
         when(orderService.processOrderPayment(partyId, orderId)).thenReturn(order);
 
-        // When & Then
         mockMvc.perform(post("/orders/{party_id}/{order_id}/process-payment", partyId, orderId))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(orderId));
