@@ -130,7 +130,7 @@ public class PriceUpdateWorkerService {
         PriceUpdateEvent priceUpdateEvent = new PriceUpdateEvent(calculatedPrice.getProduct().getId(), calculatedPrice);
         restTemplate.postForEntity(url, priceUpdateEvent, Void.class);
 
-        String url_webhook = "https://webhook.site/8e98f218-ca9f-4496-8b04-0f6c75401ba3";
+        String url_webhook = "https://webhook.site/399db4ed-b96c-4a6e-b24a-40e509726c28";
         restTemplate.postForEntity(url_webhook, priceUpdateEvent, Void.class);
     }
 
